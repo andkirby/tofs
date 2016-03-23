@@ -1,6 +1,6 @@
 require 'pp'
 require 'nokogiri'
-require_relative '../../reader/error'
+require_relative '../error'
 
 module HtmlReader
   module Page

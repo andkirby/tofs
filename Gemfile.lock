@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     colorize (0.7.7)
-    domain_name (0.5.20160309)
+    domain_name (0.5.20160310)
       unf (>= 0.0.5, < 1.0.0)
     ffi (1.9.10-x64-mingw32)
     highline (1.7.8)

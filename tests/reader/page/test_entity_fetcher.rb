@@ -1,9 +1,9 @@
 require 'test/unit'
 require 'mocha/test_unit'
 require 'nokogiri'
-require_relative '../../../lib/reader/page/entity_fetcher'
+require_relative __dir__ + '/../../../lib/html_reader/page/entity_fetcher'
 
-module Reader
+module HtmlReader
   module Page
     class TestEntityFetcher < Test::Unit::TestCase
       # Test get/set instructions
@@ -40,7 +40,7 @@ module Reader
               :selector => '.test-block a.deep-in',
             }
           })
-        assert_equal "\n    \n      Link label 1\n    \n  ", obj.fetch(html)[:name1]
+        assert_equal "\n        \n          Link label 1\n        \n    ", obj.fetch(html)[:name1]
       end
 
       # Test fetching Nokogiri::XML::Element instead text
@@ -72,12 +72,12 @@ module Reader
           })
         expected = <<-html
 <a class="deep-in" href="/test/path/main">
-    <span>
-      Link label 1
-    </span>
-  </a>
+        <span>
+          Link label 1
+        </span>
+    </a>
         html
-        assert_equal expected.strip, obj.fetch(html)[:name1]
+        assert_equal expected.strip, obj.fetch(html)[:name1].strip
       end
 
       # Test fetching attribute
@@ -138,30 +138,15 @@ module Reader
 
       protected
 
+      ##
+      # Get HTML content
+      #
+      # @return [String]
+
       def get_content
-        <<-html
-<div class="test-block">
-  <a class="deep-in" href="/test/path/main">
-    <span>
-      Link label 1
-    </span>
-  </a>
-  <div class="double-block">
-    <a class="first-link duplicate" href="/test/path">
-      <span>
-        Link label 22 first
-      </span>
-    </a>
-    <a class="second-link duplicate" href="/test/another-path">
-      <span>
-        Link label 22 second
-      </span>
-    </a>
-    <span class="vote-up">10</span>
-    <span class="vote-down">3</span>
-  </div>
-</div>
-        html
+        return @content if nil != @content
+
+        @content = File.open(__dir__ + '/../_fixture/entity_fetcher.html').read
       end
     end
   end
