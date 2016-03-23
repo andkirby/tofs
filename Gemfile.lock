@@ -1,23 +1,45 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    colorize (0.7.7)
+    domain_name (0.5.20160309)
+      unf (>= 0.0.5, < 1.0.0)
+    ffi (1.9.10-x64-mingw32)
+    highline (1.7.8)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     metaclass (0.0.4)
+    mime-types (2.99.1)
     mini_portile2 (2.0.0)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
+    netrc (0.11.0)
     nokogiri (1.6.7.2-x64-mingw32)
       mini_portile2 (~> 2.0.0.rc2)
     power_assert (0.2.7)
+    rest-client (1.8.0-x64-mingw32)
+      ffi (~> 1.9)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     test-unit (3.1.8)
       power_assert
+    timedcache (0.4.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.2-x64-mingw32)
 
 PLATFORMS
   x64-mingw32
 
 DEPENDENCIES
+  colorize
+  highline
   mocha
   nokogiri
+  rest-client
   test-unit (~> 3.1)
+  timedcache
 
 BUNDLED WITH
    1.11.2

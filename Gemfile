@@ -1,12 +1,25 @@
 # A sample Gemfile
 source 'https://rubygems.org'
 
+# Work with dom document
 gem 'nokogiri'
+
+# Unit testing
 gem 'test-unit', '~> 3.1'
 gem 'mocha'
-# gem 'rest-client'
-# gem 'colorize'
-# gem 'timedcache'
-# gem 'highline'
+
+# Request external pages
+gem 'rest-client'
+
+# Colorize CLI output
+gem 'colorize'
+
+# Backend caching
+gem 'timedcache'
+gem 'highline'
+
+# Web server
 # gem 'sinatra'
+
+
 # gem 'autoloader', '~> 0.0.2'
