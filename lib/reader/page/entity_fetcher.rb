@@ -70,7 +70,9 @@ module Reader
         get_instructions.each { |name, instruction|
           instruction[:info] = info
           if instruction[:type] == :value
-            info[name] = get_node_value(document, instruction)
+            info[name] = get_node(document, instruction)
+          elsif instruction[:type] == :attribute
+            info[name] = get_node_attribute(document, instruction)
           elsif instruction[:type] == :function
             info[name] = call_function(info, name, document, instruction)
           else
@@ -102,12 +104,23 @@ module Reader
       end
 
       ##
+      # Get node by CSS selector
+      #
       # @param [Nokogiri::HTML::Document] document
       # @param [Hash] instruction
       # @return [String]
 
-      def get_node_value(document, instruction)
+      def get_node(document, instruction)
         document.css(instruction[:selector]).first
+      end
+
+      ##
+      # @param [Nokogiri::HTML::Document] document
+      # @param [Hash] instruction
+      # @return [String]
+
+      def get_node_attribute(document, instruction)
+        get_node(document, instruction)[instruction[:attribute]]
       end
 
       # endregion

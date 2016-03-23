@@ -80,6 +80,21 @@ module Reader
         assert_equal expected.strip, obj.fetch(html)[:name1]
       end
 
+      # Test fetching attribute
+      def test_fetch_attribute
+        html = Nokogiri::HTML(get_content)
+        obj  = EntityFetcher.new
+        obj.set_instructions(
+          {
+            :name1 => {
+              :type     => :attribute,
+              :attribute=> 'href',
+              :selector => '.test-block a.deep-in',
+            }
+          })
+        assert_equal '/test/path/main', obj.fetch(html)[:name1]
+      end
+
       # Test fetching value of duplicated node
       def test_fetch_node_duplicate
         html = Nokogiri::HTML(get_content)
