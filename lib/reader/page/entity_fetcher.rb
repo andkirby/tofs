@@ -62,7 +62,7 @@ module Reader
       ##
       # Fetch data from document
       #
-      # @param [Nokogiri::HTML::Document] document
+      # @param [Nokogiri::HTML::Document, Nokogiri::XML::Element] document
       # @return [Hash]
 
       def fetch(document)
