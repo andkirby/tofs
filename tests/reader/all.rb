@@ -1,1 +1,1 @@
-require_relative 'page/test_entity'
+require_relative 'page/test_entity_fetcher'

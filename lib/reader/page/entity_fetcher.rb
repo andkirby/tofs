@@ -7,9 +7,9 @@ module Reader
     ##
     # This entity-reader class designed for reading data from HTML/XML block according to instructions
     #
-    # @see tests/reader/page/test_entity.rb
+    # @see tests/reader/page/test_entity_fetcher.rb
 
-    class Entity
+    class EntityFetcher
       ##
       # Set instructions
       #

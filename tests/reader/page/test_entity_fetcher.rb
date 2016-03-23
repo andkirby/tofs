@@ -1,23 +1,23 @@
 require 'test/unit'
 require 'mocha/test_unit'
 require 'nokogiri'
-require_relative '../../../lib/reader/page/entity'
+require_relative '../../../lib/reader/page/entity_fetcher'
 
 module Reader
   module Page
-    class TestEntity < Test::Unit::TestCase
+    class TestEntityFetcher < Test::Unit::TestCase
       # Test get/set instructions
       def test_set_instructions
-        obj   = Entity.new
+        obj   = EntityFetcher.new
         value = {:aa => 'aa'}
-        assert_instance_of(Entity, obj.set_instructions(value))
+        assert_instance_of(EntityFetcher, obj.set_instructions(value))
         assert_equal(value, obj.get_instructions)
       end
 
       # Test fetching label text
       def test_fetch_text
         html = Nokogiri::HTML(get_content)
-        obj  = Entity.new
+        obj  = EntityFetcher.new
         obj.set_instructions(
           {
             :name1 => {
@@ -31,7 +31,7 @@ module Reader
       # Test fetching non-stripped value
       def test_fetch_non_stripped_text
         html = Nokogiri::HTML(get_content)
-        obj  = Entity.new
+        obj  = EntityFetcher.new
         obj.set_instructions(
           {
             :name1 => {
@@ -46,7 +46,7 @@ module Reader
       # Test fetching Nokogiri::XML::Element instead text
       def test_fetch_element
         html = Nokogiri::HTML(get_content)
-        obj  = Entity.new
+        obj  = EntityFetcher.new
         obj.set_instructions(
           {
             :name1 => {
@@ -61,7 +61,7 @@ module Reader
       # Test fetching html text of found node
       def test_fetch_node_text
         html = Nokogiri::HTML(get_content)
-        obj  = Entity.new
+        obj  = EntityFetcher.new
         obj.set_instructions(
           {
             :name1 => {
@@ -83,7 +83,7 @@ module Reader
       # Test fetching value of duplicated node
       def test_fetch_node_duplicate
         html = Nokogiri::HTML(get_content)
-        obj  = Entity.new
+        obj  = EntityFetcher.new
         obj.set_instructions(
           {
             :name1 => {
@@ -97,7 +97,7 @@ module Reader
       # Test fetching value from with function
       def test_fetch_func_node
         html = Nokogiri::HTML(get_content)
-        obj  = Entity.new
+        obj  = EntityFetcher.new
         obj.set_instructions(
           {
             :vote_up   => {
