@@ -2,12 +2,12 @@ require 'pp'
 require 'nokogiri'
 require_relative '../../reader/error'
 
-module Reader
+module HtmlReader
   module Page
     ##
-    # This entity-reader class designed for reading data from HTML/XML block according to instructions
+    # This entity-html_reader class designed for reading data from HTML/XML block according to instructions
     #
-    # @see tests/reader/page/test_entity_fetcher.rb
+    # @see tests/html_reader/page/test_entity_fetcher.rb
 
     class EntityFetcher
       ##
@@ -76,7 +76,7 @@ module Reader
           elsif instruction[:type] == :function
             info[name] = call_function(info, name, document, instruction)
           else
-            raise Reader::Error.new 'Unknown instruction type.'
+            raise HtmlReader::Error.new 'Unknown instruction type.'
           end
 
           if info[name].instance_of?(Nokogiri::XML::Element)
