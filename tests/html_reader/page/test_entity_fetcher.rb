@@ -87,9 +87,9 @@ module HtmlReader
         obj.set_instructions(
           {
             :name1 => {
-              :type     => :attribute,
-              :attribute=> 'href',
-              :selector => '.test-block a.deep-in',
+              :type      => :attribute,
+              :attribute => 'href',
+              :selector  => '.test-block a.deep-in',
             }
           })
         assert_equal '/test/path/main', obj.fetch(html)[:name1]
