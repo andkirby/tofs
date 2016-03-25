@@ -96,7 +96,7 @@ module HtmlReader
       end
 
       # Test fetching value of duplicated node
-      def test_fetch_node_duplicate
+      def test_fetch_node_first
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
         obj.set_instructions(
