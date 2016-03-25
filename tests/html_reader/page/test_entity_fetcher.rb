@@ -109,6 +109,28 @@ module HtmlReader
         assert_equal 'Link label 22 first', obj.fetch(html)[:name1]
       end
 
+      # Test fetching value of duplicated node
+      def test_fetch_few_nodes
+        html = Nokogiri::HTML(get_content)
+        obj  = EntityFetcher.new
+        obj.set_instructions(
+          {
+            :name1 => {
+              :type     => :value,
+              :selector => '.double-block a.duplicate',
+            },
+            :link  => {
+              :type      => :attribute,
+              :attribute => 'href',
+              :selector  => '.double-block a.duplicate',
+            },
+          })
+        expected = [
+          {:name1 => 'Link label 22 first', :link => '/test/path'},
+          {:name1 => 'Link label 22 second', :link => '/test/another-path'}]
+        assert_equal expected, obj.fetch(html, true)
+      end
+
       # Test fetching value from with function
       def test_fetch_func_node
         html = Nokogiri::HTML(get_content)

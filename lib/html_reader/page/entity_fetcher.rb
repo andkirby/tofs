@@ -11,6 +11,19 @@ module HtmlReader
 
     class EntityFetcher
       ##
+      # Cache fetched XML elements
+      # @type [Hash]
+
+      @selector_cache = {}
+
+      ##
+      # Init
+
+      def initialize
+        @selector_cache = @selector_cache || {}
+      end
+
+      ##
       # Set instructions
       #
       # Example for reading simple text by CSS selector:
@@ -22,7 +35,7 @@ module HtmlReader
       # }
       # There are filters allowed for type :value :
       # - :node_text, returns XML of found node
-      # - :element, returns object Nokogiri::XML::Element of found node
+      # - :node, returns object Nokogiri::XML::Element of found node
       # - :no_strip, returns non-stripped text
       # - by default it use .strip for found text
       # Example for calculating value according to fetch fields:
@@ -63,30 +76,94 @@ module HtmlReader
       # Fetch data from document
       #
       # @param [Nokogiri::HTML::Document, Nokogiri::XML::Element] document
+      # @param [TrueClass, FalseClass] plenty Get plenty of elements or the only one
       # @return [Hash]
 
-      def fetch(document)
+      def fetch(document, plenty = false)
+        if plenty
+          fetch_plenty(document)
+        else
+          fetch_single(document)
+        end
+      end
+
+      ##
+      # Fetch single data from document
+      #
+      # @param [Nokogiri::HTML::Document, Nokogiri::XML::Element] document
+      # @return [Hash]
+
+      def fetch_single(document)
         info = {}
         get_instructions.each { |name, instruction|
           instruction[:info] = info
           if instruction[:type] == :value
-            info[name] = get_node(document, instruction)
+            node = fetch_node(document, instruction)
           elsif instruction[:type] == :attribute
-            info[name] = get_node_attribute(document, instruction)
+            node = get_node_attribute(
+              fetch_node(document, instruction),
+              instruction
+            )
           elsif instruction[:type] == :function
-            info[name] = call_function(info, name, document, instruction)
+            node = call_function(info, name, document, instruction)
           else
             raise HtmlReader::Error.new 'Unknown instruction type.'
           end
 
-          if info[name].instance_of?(Nokogiri::XML::Element)
-            info[name] = filter(info[name], instruction[:filter])
-          end
+          node       = filter_node(node, instruction)
+          info[name] = node
         }
         info
       end
 
+      ##
+      # Fetch collection data from document
+      #
+      # @param [Nokogiri::HTML::Document, Nokogiri::XML::Element] document
+      # @return [Hash]
+
+      def fetch_plenty(document)
+        info = {}
+        get_instructions.each { |name, instruction|
+          instruction[:info] = info
+          if instruction[:type] == :value || instruction[:type] == :attribute
+            nodes = get_nodes(document, instruction)
+            if instruction[:type] == :attribute
+              nodes = nodes.map {|node| get_node_attribute(node, instruction)}
+            end
+          elsif instruction[:type] == :function
+            nodes = call_function(info, name, document, instruction)
+          else
+            raise HtmlReader::Error.new 'Unknown instruction type.'
+          end
+
+          nodes = nodes.map {|node| filter_node(node, instruction)}
+          nodes.each_with_index { |node, i|
+            info[i] = info[i] || {}; info[i][name] = node
+          }
+        }
+
+        # Return without particular indexes
+        info.map {|element| element[1]}
+      end
+
       protected
+
+      # region CSS getters
+
+      ##
+      # Filter node
+      #
+      # @param [Nokogiri::XML::Element] node
+      # @param [Hash] instruction
+      # @return [String, Nokogiri::XML::Element]
+
+      def filter_node(node, instruction)
+        if node.instance_of?(Nokogiri::XML::Element)
+          node = filter(node, instruction[:filter])
+        end
+        node
+      end
 
       # region CSS getters
 
@@ -110,23 +187,38 @@ module HtmlReader
       # @param [Hash] instruction
       # @return [String]
 
-      def get_node(document, instruction)
+      def fetch_node(document, instruction)
         document.css(instruction[:selector]).first
       end
 
       ##
+      # Get node by CSS selector
+      #
       # @param [Nokogiri::HTML::Document] document
+      # @param [Hash] instruction
+      # @return [Nokogiri::XML::NodeSet]
+
+      def get_nodes(document, instruction)
+        if @selector_cache[instruction[:selector]]
+          return @selector_cache[instruction[:selector]]
+        end
+
+        @selector_cache[instruction[:selector]] = document.css(instruction[:selector])
+      end
+
+      ##
+      # @param [Nokogiri::XML::Element] element
       # @param [Hash] instruction
       # @return [String]
 
-      def get_node_attribute(document, instruction)
-        get_node(document, instruction)[instruction[:attribute]]
+      def get_node_attribute(element, instruction)
+        element[instruction[:attribute]]
       end
 
       # endregion
 
       ##
-      # Filter fetched element
+      # Filter fetched node
       #
       # @param [Nokogiri::XML::Element] value
       # @param [Symbol] filter_name
