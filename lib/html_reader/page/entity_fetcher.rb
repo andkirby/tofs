@@ -111,8 +111,12 @@ module HtmlReader
         collector.get_data
       end
 
+      ##
+      # Get value collector
+      #
       # @param [Nokogiri::HTML::Document, Nokogiri::XML::Element] document
       # @return [Page::ValuesCollector]
+
       def get_values_collector(document)
         Page::ValuesCollector.new({:document => document})
       end
