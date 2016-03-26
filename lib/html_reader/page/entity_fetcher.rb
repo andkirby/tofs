@@ -141,10 +141,11 @@ module HtmlReader
         }
 
         data = []
-        # @param [Page::ValuesCollector] collection
-        collectors.each { |i, collector|
+        collectors.each do
+          # @type [HtmlReader::Page::ValuesCollector] collector
+          |i, collector|
           data.push collector.get_data
-        }
+        end
 
         data
       end
