@@ -8,7 +8,8 @@ module HtmlReader
     # @return [Nokogiri::XML::Element]
 
     def fetch_node(document, instruction)
-      fetch_nodes(document, instruction).first
+      nodes = fetch_nodes(document, instruction)
+      nodes.first if nodes
     end
 
     ##
