@@ -7,7 +7,7 @@ module HtmlReader
   module Page
     class TestEntityFetcher < Test::Unit::TestCase
       # Test get/set instructions
-      def test_set_instructions
+      def _test_set_instructions
         obj   = EntityFetcher.new
         value = {:aa => 'aa'}
         assert_instance_of(EntityFetcher, obj.set_instructions(value))
@@ -19,12 +19,26 @@ module HtmlReader
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
         obj.set_instructions(
-          {
-            :name1 => {
-              :type     => :value,
+          [
+            {
               :selector => '.test-block a.deep-in',
+              :data     => {:name1 => {:type => :value}}
             }
-          })
+          ])
+        assert_equal ({:name1 => 'Link label 1'}), obj.fetch(html)
+      end
+
+      # Test fetching label text
+      def test_fetch_simple_instruction
+        html = Nokogiri::HTML(get_content)
+        obj  = EntityFetcher.new
+        obj.set_instructions(
+          [
+            {
+              :selector => '.test-block a.deep-in',
+              :data     => {:name1 => {}} # {:type => :value} is omitted
+            }
+          ])
         assert_equal ({:name1 => 'Link label 1'}), obj.fetch(html)
       end
 
@@ -33,14 +47,15 @@ module HtmlReader
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
         obj.set_instructions(
-          {
-            :name1 => {
-              :type     => :value,
-              :filter   => :no_strip,
+          [
+            {
+              :data     => {:name1 => {:filter => :no_strip}},
               :selector => '.test-block a.deep-in',
             }
-          })
-        assert_equal "\n        \n          Link label 1\n        \n    ", obj.fetch(html)[:name1]
+          ])
+        assert_equal(
+          "\n        \n          Link label 1\n        \n    ",
+          obj.fetch(html)[:name1])
       end
 
       # Test fetching Nokogiri::XML::Element instead text
@@ -48,13 +63,10 @@ module HtmlReader
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
         obj.set_instructions(
-          {
-            :name1 => {
-              :type     => :value,
-              :filter   => :element,
-              :selector => '.test-block a.deep-in',
-            }
-          })
+          [{
+             :data     => {:name1 => {:filter => :element}},
+             :selector => '.test-block a.deep-in',
+           }])
         assert_instance_of Nokogiri::XML::Element, obj.fetch(html)[:name1]
       end
 
@@ -63,13 +75,10 @@ module HtmlReader
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
         obj.set_instructions(
-          {
-            :name1 => {
-              :type     => :value,
-              :filter   => :node_text,
-              :selector => '.test-block a.deep-in',
-            }
-          })
+          [{
+             :data     => {:name1 => {:filter => :node_text}},
+             :selector => '.test-block a.deep-in',
+           }])
         expected = <<-html
 <a class="deep-in" href="/test/path/main">
         <span>
@@ -85,14 +94,37 @@ module HtmlReader
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
         obj.set_instructions(
-          {
-            :name1 => {
-              :type      => :attribute,
-              :attribute => 'href',
-              :selector  => '.test-block a.deep-in',
-            }
-          })
-        assert_equal '/test/path/main', obj.fetch(html)[:name1]
+          [{
+             :data     => {
+               :url =>
+                 {
+                   :type      => :attribute,
+                   :attribute => 'href',
+                 },
+             },
+             :selector => '.test-block a.deep-in',
+           }])
+        assert_equal '/test/path/main', obj.fetch(html)[:url]
+      end
+
+      # Test fetching attribute
+      def test_fetch_two_data_elements
+        html = Nokogiri::HTML(get_content)
+        obj  = EntityFetcher.new
+        obj.set_instructions(
+          [{
+             :data     => {
+               :url   =>
+                 {
+                   :type      => :attribute,
+                   :attribute => 'href',
+                 },
+               :name1 => {}
+             },
+             :selector => '.test-block a.deep-in',
+           }])
+        assert_equal '/test/path/main', obj.fetch(html)[:url]
+        assert_equal 'Link label 1', obj.fetch(html)[:name1]
       end
 
       # Test fetching value of duplicated node
@@ -100,17 +132,15 @@ module HtmlReader
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
         obj.set_instructions(
-          {
-            :name1 => {
-              :type     => :value,
-              :selector => '.double-block a.duplicate',
-            }
-          })
+          [{
+             :data     => {:name1 => {}},
+             :selector => '.double-block a.duplicate',
+           }])
         assert_equal 'Link label 22 first', obj.fetch(html)[:name1]
       end
 
       # Test fetching value of duplicated node
-      def test_fetch_few_nodes
+      def _test_fetch_few_nodes
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
         obj.set_instructions(
@@ -136,26 +166,34 @@ module HtmlReader
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
         obj.set_instructions(
-          {
-            :vote_up   => {
-              :type     => :value,
+          [
+            {
               :selector => '.vote-up',
+              :data     => {
+                :up => {:type => :value},
+              }
             },
-            :vote_down => {
-              :type     => :value,
+            {
               :selector => '.vote-down',
+              :data     => {
+                :down => {:type => :value},
+              }
             },
-            :vote_diff => {
-              :type     => :function,
-              :function => Proc.new { |info, name, document, instruction|
-                info[:vote_up].to_i - info[:vote_down].to_i
+            {
+              :data => {
+                :diff => {
+                  :type     => :function,
+                  :function => Proc.new { |info, name, document, instruction|
+                    info[:up].to_i - info[:down].to_i
+                  },
+                }
               },
             }
-          })
+          ])
         data = obj.fetch(html)
-        assert_equal '10', data[:vote_up]
-        assert_equal '3', data[:vote_down]
-        assert_equal 7, data[:vote_diff]
+        assert_equal '10', data[:up]
+        assert_equal '3', data[:down]
+        assert_equal 7, data[:diff]
       end
 
       protected
