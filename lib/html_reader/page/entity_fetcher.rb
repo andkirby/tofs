@@ -2,6 +2,7 @@ require 'pp'
 require 'nokogiri'
 require_relative '../error'
 require_relative 'values_collector'
+require_relative '../page'
 
 module HtmlReader
   module Page
@@ -98,7 +99,7 @@ module HtmlReader
         collector = get_values_collector(document)
 
         get_instructions.each { |instruction|
-          node = instruction[:selector] ? fetch_node(document, instruction) : nil
+          node = Page::fetch_node(document, instruction)
 
           if instruction[:data]
             instruction[:data].each { |name, data_instruction|
@@ -124,8 +125,8 @@ module HtmlReader
 
       def fetch_plenty(document)
         collectors = {}
-        get_instructions.each { |instruction|
-          nodes = instruction[:selector] ? fetch_nodes(document, instruction) : nil
+        get_instructions.each do |instruction|
+          nodes = Page::fetch_nodes(document, instruction)
 
           nodes.each_with_index { |node, i|
             unless collectors.key? i
@@ -138,7 +139,7 @@ module HtmlReader
               }
             end
           }
-        }
+        end
 
         data = []
         collectors.each do
@@ -152,35 +153,6 @@ module HtmlReader
 
       protected
 
-      # region CSS getters
-
-      ##
-      # Get node by CSS selector
-      #
-      # @param [Nokogiri::HTML::Document] document
-      # @param [Hash] instruction
-      # @return [Nokogiri::XML::Element]
-
-      def fetch_node(document, instruction)
-        document.css(instruction[:selector]).first
-      end
-
-      ##
-      # Get node by CSS selector
-      #
-      # @param [Nokogiri::HTML::Document] document
-      # @param [Hash] instruction
-      # @return [Nokogiri::XML::NodeSet]
-
-      def fetch_nodes(document, instruction)
-        if @selector_cache[instruction[:selector]]
-          return @selector_cache[instruction[:selector]]
-        end
-
-        @selector_cache[instruction[:selector]] = document.css(instruction[:selector])
-      end
-
-      # endregion
     end
   end
 end
