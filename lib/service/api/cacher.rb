@@ -8,6 +8,7 @@ module Service
       @adapters
       @base_name
       @use_base_name
+      @timeout
 
       # Init options
       #
@@ -15,6 +16,7 @@ module Service
 
       def initialize(options = {})
         @base_name     = options[:base_name]
+        @timeout       = options[:timeout] || 24 * 3600 * 365
         @cache_dir     = options[:cache_dir] || __dir__ + '/../../../.cache'
         @use_base_name = (options.key? :use_base_name) ? options[:use_base_name] : true
         @adapters      = {}
@@ -28,9 +30,9 @@ module Service
       def get_adapter (namespace = nil)
         return @adapters[namespace] if @adapters[namespace]
 
-        file = get_cache_file(namespace, @use_base_name)
+        file            = get_cache_file(namespace, @use_base_name)
         @adapters[file] = TimedCache.new(
-          {:type => 'file', :filename => file}
+          {:type => 'file', :filename => file, :default_timeout => @timeout}
         )
       end
 
