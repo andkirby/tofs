@@ -58,7 +58,7 @@ module HtmlReader
       #   }
       # }
       #
-      # @param [Hash] instructions
+      # @param [Array] instructions
       # @return [self]
 
       def set_instructions(instructions)
@@ -68,7 +68,7 @@ module HtmlReader
 
       # Get instructions
       #
-      # @return [Hash]
+      # @return [Array]
 
       def get_instructions
         @instructions
@@ -99,7 +99,12 @@ module HtmlReader
         collector = get_values_collector(document)
 
         get_instructions.each { |instruction|
-          node = Page::fetch_node(document, instruction)
+          begin
+            node = Page::fetch_node(document, instruction)
+          rescue NoMethodError => e
+            pp e
+            exit 22
+          end
 
           if instruction[:data]
             instruction[:data].each { |name, data_instruction|
@@ -118,7 +123,11 @@ module HtmlReader
       # @return [Page::ValuesCollector]
 
       def get_values_collector(document)
-        Page::ValuesCollector.new({:document => document})
+        Page::ValuesCollector.new(
+          {
+            :document     => document,
+            :instructions => get_instructions,
+          })
       end
 
       ##
@@ -130,6 +139,9 @@ module HtmlReader
       def fetch_plenty(document)
         collectors = {}
         get_instructions.each do |instruction|
+          until instruction.instance_of? Hash
+            puts 1
+          end
           nodes = Page::fetch_nodes(document, instruction)
 
           nodes.each_with_index { |node, i|
@@ -148,7 +160,7 @@ module HtmlReader
         data = []
         collectors.each do
           # @type [HtmlReader::Page::ValuesCollector] collector
-          |i, collector|
+        |i, collector|
           data.push collector.get_data
         end
 

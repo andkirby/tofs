@@ -28,36 +28,12 @@ module HtmlReader
 
     def fetch(document)
       items = []
-      find_entities(document).each { |entity_document|
-        items.unshift fetch_entity_data(entity_document)
+      fetch_block_document(document, get_instructions[:block]).each { |block_document|
+        fetch_data(block_document, get_instructions[:entity]).each { |element|
+          items.push element
+        }
       }
       items
-    end
-
-    ##
-    # Fetch entity data
-    #
-    # @param [Nokogiri::XML::Element] entity_document
-    # @return [Hash]
-
-    def fetch_entity_data(entity_document)
-      fetcher = Page::EntityFetcher.new
-      fetcher.set_instructions get_instructions[:entity][:instructions]
-      fetcher.fetch entity_document
-    end
-
-
-    ##
-    # Fetch entities on a page
-    #
-    # @param [Nokogiri::HTML::Document] document
-    # @return [Nokogiri::XML::Element[]]
-
-    def find_entities(document)
-      if get_instructions[:entity][:type] == :function
-        return call_function(document, get_instructions[:entity])
-      end
-      document.css(get_instructions[:entity][:selector])
     end
 
     ##
@@ -70,9 +46,36 @@ module HtmlReader
       if get_instructions[:last_page][:type] == :function
         !!call_function(document, get_instructions[:last_page])
       else
-        document.css(get_instructions[:last_page][:selector]).count > 0
+        Page::fetch_nodes(document, get_instructions[:last_page]).count > 0
       end
+    end
 
+    protected
+
+    ##
+    # Fetch entity data
+    #
+    # @param [Nokogiri::XML::Element] entity_document
+    # @param [Hash] instructions
+    # @return [Hash]
+
+    def fetch_data(entity_document, instructions)
+      fetcher = Page::EntityFetcher.new
+      fetcher.set_instructions instructions
+      fetcher.fetch entity_document, true
+    end
+
+    ##
+    # Fetch entities on a page
+    #
+    # @param [Nokogiri::HTML::Document] document
+    # @return [Nokogiri::XML::NodeSet]
+
+    def fetch_block_document(document, instructions)
+      if instructions[:type] == :function
+        return call_function(document, instructions)
+      end
+      Page::fetch_nodes(document, instructions)
     end
 
     ##

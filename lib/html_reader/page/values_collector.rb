@@ -22,7 +22,7 @@ module HtmlReader
       #
       # @type [Hash]
 
-      @data = {}
+      @data    = {}
 
       def initialize(options = {})
         @options = options
@@ -35,7 +35,7 @@ module HtmlReader
       # @param [Symbol] name
       # @param [Hash] instruction
       # @param [Nokogiri::XML::Element] node
-      # @return [self]
+      # @return [String, Nokogiri::XML::Element]
 
       def fetch(name, instruction, node)
         if node && instruction[:type] == :attribute
@@ -45,6 +45,8 @@ module HtmlReader
           )
         elsif instruction[:type] == :function
           value = call_function(name, instruction)
+        elsif instruction[:type] == :children
+          value = get_children(name, instruction, node)
         elsif node && (instruction[:type] == :value || nil == instruction[:type])
           # empty type should be determined as :value
           value = node
@@ -55,8 +57,32 @@ module HtmlReader
         end
 
         @data[name] = filter_node(value, instruction)
+      end
 
-        self
+      ##
+      # Get collected data
+      #
+      # @return [Hash]
+
+      def get_data
+        @data
+      end
+
+      protected
+
+      ##
+      # Fetch value of element
+      #
+      # @param [Symbol] name
+      # @param [Hash] instruction
+      # @param [Nokogiri::XML::Element] node
+      # @return [self]
+
+      def get_children(name, instruction, node)
+        instruction = instruction[:instructions] == :the_same ? @options[:instructions] : instruction
+        Page::EntityFetcher.new.
+          set_instructions(instruction).
+          fetch(node, true)
       end
 
       ##
@@ -92,15 +118,6 @@ module HtmlReader
 
         # return text without tags
         value.text.strip
-      end
-
-      ##
-      # Get collected data
-      #
-      # @return [Hash]
-
-      def get_data
-        @data
       end
 
       ##
