@@ -140,21 +140,20 @@ module HtmlReader
       end
 
       # Test fetching value of duplicated node
-      def _test_fetch_few_nodes
+      def test_fetch_selector_nodes
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
-        obj.set_instructions(
+        obj.set_instructions([
           {
-            :name1 => {
-              :type     => :value,
-              :selector => '.double-block a.duplicate',
-            },
-            :link  => {
-              :type      => :attribute,
-              :attribute => 'href',
-              :selector  => '.double-block a.duplicate',
-            },
-          })
+            :selector  => '.double-block a.duplicate',
+            :data => {
+              :name1 => {},
+              :link  => {
+                :type      => :attribute,
+                :attribute => 'href',
+              },
+            }
+          }])
         expected = [
           {:name1 => 'Link label 22 first', :link => '/test/path'},
           {:name1 => 'Link label 22 second', :link => '/test/another-path'}]
@@ -183,8 +182,8 @@ module HtmlReader
               :data => {
                 :diff => {
                   :type     => :function,
-                  :function => Proc.new { |info, name, document, instruction|
-                    info[:up].to_i - info[:down].to_i
+                  :function => Proc.new { |name, instruction, data, options|
+                    data[:up].to_i - data[:down].to_i
                   },
                 }
               },
