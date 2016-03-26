@@ -29,23 +29,23 @@ module HtmlReader
       # Example for reading simple text by CSS selector:
       # {
       #   :name1 => {
-      #     :type     => :value,
+      #     :type     => :instruction,
       #     :selector => '.test-block a.deep-in',
       #   }
       # }
-      # There are filters allowed for type :value :
+      # There are filters allowed for type :instruction :
       # - :node_text, returns XML of found node
       # - :node, returns object Nokogiri::XML::Element of found node
       # - :no_strip, returns non-stripped text
       # - by default it use .strip for found text
-      # Example for calculating value according to fetch fields:
+      # Example for calculating instruction according to fetch fields:
       # {
       #   :vote_up   => {
-      #     :type     => :value,
+      #     :type     => :instruction,
       #     :selector => '.vote-up',
       #   },
       #     :vote_down => {
-      #     :type     => :value,
+      #     :type     => :instruction,
       #     :selector => '.vote-down',
       #   },
       #     :vote_diff => {
@@ -95,23 +95,27 @@ module HtmlReader
 
       def fetch_single(document)
         info = {}
-        get_instructions.each { |name, instruction|
-          instruction[:info] = info
-          if instruction[:type] == :value
-            node = fetch_node(document, instruction)
-          elsif instruction[:type] == :attribute
-            node = get_node_attribute(
-              fetch_node(document, instruction),
-              instruction
-            )
-          elsif instruction[:type] == :function
-            node = call_function(info, name, document, instruction)
-          else
-            raise HtmlReader::Error.new 'Unknown instruction type.'
-          end
+        get_instructions.each { |top_instruction|
+          node = top_instruction[:selector] ? fetch_node(document, top_instruction) : nil
 
-          node       = filter_node(node, instruction)
-          info[name] = node
+          if top_instruction[:data]
+            top_instruction[:data].each { |name, instruction|
+              if instruction[:type] == :attribute
+                value = get_node_attribute(
+                  node,
+                  instruction
+                )
+              elsif instruction[:type] == :function
+                value = call_function(info, name, document, instruction)
+              elsif instruction[:type] == :value || nil == instruction[:type]
+                value = node
+              else
+                raise HtmlReader::Error.new 'Unknown instruction type.'
+              end
+              value = filter_node(value, instruction)
+              info[name] = value
+            }
+          end
         }
         info
       end
