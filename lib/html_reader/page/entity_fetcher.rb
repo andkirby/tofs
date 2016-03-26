@@ -158,7 +158,7 @@ module HtmlReader
       #
       # @param [Nokogiri::HTML::Document] document
       # @param [Hash] instruction
-      # @return [String]
+      # @return [Nokogiri::XML::Element]
 
       def fetch_node(document, instruction)
         document.css(instruction[:selector]).first

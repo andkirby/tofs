@@ -7,7 +7,7 @@ module HtmlReader
   module Page
     class TestEntityFetcher < Test::Unit::TestCase
       # Test get/set instructions
-      def _test_set_instructions
+      def test_set_instructions
         obj   = EntityFetcher.new
         value = {:aa => 'aa'}
         assert_instance_of(EntityFetcher, obj.set_instructions(value))
@@ -139,24 +139,55 @@ module HtmlReader
         assert_equal 'Link label 22 first', obj.fetch(html)[:name1]
       end
 
-      # Test fetching value of duplicated node
+      # Test two nodes (plenty node)
       def test_fetch_selector_nodes
         html = Nokogiri::HTML(get_content)
         obj  = EntityFetcher.new
-        obj.set_instructions([
-          {
-            :selector  => '.double-block a.duplicate',
-            :data => {
-              :name1 => {},
-              :link  => {
-                :type      => :attribute,
-                :attribute => 'href',
-              },
-            }
-          }])
+        obj.set_instructions(
+          [
+            {
+              :selector => '.double-block a.duplicate',
+              :data     => {
+                :name1 => {},
+                :link  => {
+                  :type      => :attribute,
+                  :attribute => 'href',
+                },
+              }
+            },
+          ])
         expected = [
           {:name1 => 'Link label 22 first', :link => '/test/path'},
           {:name1 => 'Link label 22 second', :link => '/test/another-path'}]
+        assert_equal expected, obj.fetch(html, true)
+      end
+
+      # Test two nodes with two different selectors (plenty node)
+      def test_fetch_nodes_two_selectors
+        html = Nokogiri::HTML(get_content)
+        obj  = EntityFetcher.new
+        obj.set_instructions(
+          [
+            {
+              :selector => '.test-block-2 .entity-block a',
+              :data     => {
+                :label1 => {},
+                :link   => {
+                  :type      => :attribute,
+                  :attribute => 'href',
+                },
+              }
+            },
+            {
+              :selector => '.test-block-2 .entity-block h6',
+              :data     => {
+                :title1 => {},
+              }
+            }
+          ])
+        expected = [
+          {:title1 => 'Title 1', :link => '/some/1', :label1 => 'Label-1'},
+          {:title1 => 'Title 2', :link => '/some/2', :label1 => 'Label-2'}]
         assert_equal expected, obj.fetch(html, true)
       end
 
