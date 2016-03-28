@@ -1,13 +1,13 @@
+require 'uri'
 require 'rest_client'
 require_relative 'cacher'
 
 module Service
   module Api
     module Request
-
       def request(url, use_cache = true, namespace = nil)
         if use_cache
-          cacher = Api::Cacher.new({:base_name => url})
+          cacher = Api::Cacher.new({:base_name => URI.parse(url).host})
           body = cacher.get url, namespace
           return body if nil != body
 
