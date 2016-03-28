@@ -1,7 +1,10 @@
 module Shell
   # Output
-  # This class helps to make output message for command line
+  # It helps to make output message for command line
   module Output
+  end
+
+  class << Output
     @last_firm_message
     @last_message_inline
     @last_message_length
@@ -56,7 +59,7 @@ module Shell
       # it's needed for full replacement with spaces of previous message
       @last_message_length = replaceable ? message.length : 0
       # save last firm message for replacement
-      @last_firm_message = message if !replaceable && inline
+      @last_firm_message   = message if !replaceable && inline
       # save last inline state for pushing next non-inline message to the next line
       @last_message_inline = inline
 
@@ -64,13 +67,14 @@ module Shell
       self
     end
 
-    protected
-
-    def flash_output
+    protected def flash_output
       STDOUT.flush
       self
     end
 
-    module_function :simple, :inline, :temp, :flash_output, :add
+    # module_function :simple, :inline, :temp, :add
   end
 end
+
+
+
