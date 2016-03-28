@@ -61,9 +61,12 @@ module Service
       protected
 
       def get_cache_file(namespace, use_base_name)
-        @cache_dir + '/' +
-          (use_base_name ? get_base_cache_key + '_' : '') +
+        file = @cache_dir + '/' +
+          (use_base_name ? get_base_cache_key + '/' : '') +
           (namespace || 'main') + '.txt'
+        # TODO Check writing
+        FileUtils.mkpath File.dirname(file)
+        file
       end
 
       def get_base_cache_key
