@@ -4,8 +4,8 @@ require 'colorize'
 
 module Service
   module Document
-    def fetch(url)
-      create(self::request(url))
+    def fetch(url, verbose = false, exit_on_error = false)
+      create(self::request(url, verbose, exit_on_error))
     end
 
     def create(html)
@@ -17,7 +17,7 @@ module Service
         if verbose
           # TODO add output module
           Shell::Output.inline url
-          output.temp '...FETCHING'.yellow
+          Shell::Output.temp '...FETCHING'.yellow
         end
         result = Service::Api::Request::request url
         if verbose
