@@ -5,8 +5,25 @@ module Shell
   end
 
   class << Output
+    ##
+    # Last firm message (it's needed for future replacement)
+    #
+    # @ type [String]
+
     @last_firm_message
+
+    ##
+    # Last inline message
+    #
+    # @ type [String]
+
     @last_message_inline
+
+    ##
+    # Length of message
+    #
+    # @ type [Integer]
+
     @last_message_length
 
     # Add simple output
@@ -35,6 +52,7 @@ module Shell
       self
     end
 
+    ##
     # Add inline output
     # Next line will be added after this line
     #
@@ -42,6 +60,7 @@ module Shell
     # @param [Boolean] replaceable Passed message should be replaced with next line
     # @param [Boolean] inline      Passed message should be added inline,
     #                             i.e. without line separator
+
     def add(message, replaceable = false, inline = false)
       # Go to next line if it's not inline
       print "\n" if !inline && @last_message_inline
@@ -66,6 +85,11 @@ module Shell
       flash_output
       self
     end
+
+    ##
+    # Flash output (push output to console)
+    #
+    # @param [self]
 
     protected def flash_output
       STDOUT.flush
