@@ -20,7 +20,7 @@ module Service
       end
 
       def execute(url)
-        RestClient.get(url).body
+        String.new(RestClient.get(url))
       end
 
       module_function :execute, :request
