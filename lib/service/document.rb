@@ -12,22 +12,22 @@ module Service
       Nokogiri::HTML(html)
     end
 
-    def request(url, verbose = false, exit_on_error = true)
+    def request(url, verbose = false, exit_on_error = false)
       begin
         if verbose
           # TODO add output module
-          output.inline url
+          Shell::Output.inline url
           output.temp '...FETCHING'.yellow
         end
         result = Service::Api::Request::request url
         if verbose
-          output.temp '...OK'.green
-          output.inline url
+          Shell::Output.temp '...OK'.green
+          Shell::Output.inline url
         end
         result
       rescue => e
         if verbose
-          output.simple "URL #{url} not found."
+          Shell::Output.simple "URL #{url} not found."
           exit 404 if exit_on_error
         end
         raise e
