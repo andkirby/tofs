@@ -15,19 +15,23 @@ module Service
       # @param {Hash} option
 
       def initialize(options = {})
-        @base_name     = options[:base_name]
-        @timeout       = options[:timeout] || 24 * 3600 * 365
-        @cache_dir     = options[:cache_dir] || __dir__ + '/../../../.cache'
-        @use_base_name = (options.key? :use_base_name) ? options[:use_base_name] : true
-        @adapters      = {}
+        @base_name         = options[:base_name]
+        @default_namespace = options[:default_namespace]
+        @timeout           = options[:timeout] || 24 * 3600 * 365
+        @cache_dir         = options[:cache_dir] || __dir__ + '/../../../.cache'
+        @use_base_name     = (options.key? :use_base_name) ? options[:use_base_name] : true
+        @adapters          = {}
       end
 
+      ##
       # Get cacher
       #
       # @param [String] namespace
       # @return [TimedCache]
 
       def get_adapter (namespace = nil)
+        namespace = @default_namespace if namespace == nil
+
         return @adapters[namespace] if @adapters[namespace]
 
         file            = get_cache_file(namespace, @use_base_name)
