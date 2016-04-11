@@ -11,8 +11,7 @@ module Service
       module Category
         class Menu
           def fetch
-            cacher = Service::Api::Cacher.new({:base_name => Service::Fs2Ua::HOSTNAME})
-            menu   = cacher.get 'menu', 'menu'
+            menu = get_cacher.get 'menu', 'menu'
             return menu if nil != menu
 
             # fetch
@@ -23,12 +22,56 @@ module Service
             fetcher.set_instructions self::get_menu_instructions
             menu = fetcher.fetch(html)
 
-            cacher.put 'menu', menu, 'menu'
+            get_cacher.put 'menu', menu, 'menu'
+
+            menu
+          end
+
+          def fetch_linear(use_cache = true)
+
+            if use_cache
+              menu = get_cacher.get 'menu-linear', 'menu' if use_cache
+              return menu if nil != menu
+            end
+
+            menu = get_linear_menu(fetch)
+            get_cacher.put 'menu-linear', menu, 'menu' if use_cache
 
             menu
           end
 
           protected
+
+          def get_linear_menu(menu, parent_name = '', level = 0, count = 0)
+            result = {}
+            menu.each { |item|
+              if item.instance_of? Array
+                return show item, level
+              end
+
+              if level > 0
+                count         += 1
+                result[count] = {
+                  :id    => count,
+                  :label => parent_name + '/' + item[:label],
+                  :url   => item[:url]
+                }
+              end
+
+              if item[:_children]
+                result = result.merge(
+                  get_linear_menu(
+                    item[:_children], item[:label], level + 1, result.count
+                  )
+                )
+              end
+            }
+            result
+          end
+
+          def get_cacher
+            Service::Api::Cacher.new({:base_name => Service::Fs2Ua::HOSTNAME})
+          end
 
           def get_menu_instructions
             {
