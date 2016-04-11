@@ -14,19 +14,38 @@ module Service
           GENRE_LABEL = "\xD0\xBF\xD0\xBE\x20\xD0\xB6\xD0\xB0\xD0\xBD\xD1\x80\xD0\xB0\xD0\xBC"
 
           @cacher = nil
+          @strict = true
+
+          def initialize
+            @strict = true
+          end
 
           def fetch
             # read cache
             genres = get_cacher.get 'genres', 'genres'
-            return genres if nil != genres
+            return filter_by_strict(genres) if nil != genres
 
             # grab genres
             menu   = Service::Fs2Ua::Api::Category::Menu.new.fetch
             genres = fetch_by_menu(menu)
+            genres = filter_by_strict(genres)
+
             # write cache
             get_cacher.put('genres', genres, 'genres')
 
             genres
+          end
+
+          def filter_by_strict(genres)
+            if @strict
+              genres.each { |key, list|
+                list.delete_if{|i|
+                  get_ignored_names.include?(i[:label])
+                  # puts i[:label]
+                }
+              }
+            end
+            list
           end
 
           def fetch_by_menu(menu)
@@ -109,6 +128,12 @@ module Service
                 :base_name         => Service::Fs2Ua::HOSTNAME,
                 :default_namespace => 'genres',
               })
+          end
+
+          def get_ignored_names
+            [
+              "\xD0\xAD\xD1\x80\xD0\xBE\xD1\x82\xD0\xB8\xD0\xBA\xD0\xB0"
+            ]
           end
         end
       end
