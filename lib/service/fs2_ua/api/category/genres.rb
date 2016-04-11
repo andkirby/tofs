@@ -21,55 +21,41 @@ module Service
             return genres if nil != genres
 
             # grab genres
-            genres = {}
-            Service::Fs2Ua::Api::Category::Menu.new.fetch.each { |top_node|
-              unless top_node[:_children]
-                raise 'No children.'
-              end
-              top_node[:_children].each { |node|
-                result = fetch_url_to_genres_page(node)
-                next unless result[:url]
-
-                ##
-                # Fetch genre URL
-                #
-                url = fetch_genre_url(result)
-
-                next if url == nil
-
-                genres[node[:url]] = url
-              }
-            }
+            menu   = Service::Fs2Ua::Api::Category::Menu.new.fetch
+            genres = fetch_by_menu(menu)
             # write cache
             get_cacher.put('genres', genres, 'genres')
 
             genres
           end
 
-          protected
+          def fetch_by_menu(menu)
+            genres = {}
+            menu.each { |top_node|
+              unless top_node[:_children]
+                raise 'No children.'
+              end
 
-          def fetch_url_to_genres_page(node)
-            html = Service::Document::fetch(
-              Service::Fs2Ua::get_base_url + node[:url]
-            )
-            return nil if html == nil
-
-            # Fetch genre URL
-            fetcher     = HtmlReader::Page::EntityFetcher.new
-            fetcher.set_instructions(
-              [
-                {
-                  :selector => "a:contains('" + GENRE_LABEL + "')",
-                  :data     => {
-                    :url => {:type => :attribute, :attribute => 'href'},
-                  },
-                }]
-            )
-
-            fetcher.fetch(html)
+              top_node[:_children].each { |node|
+                result = fetch_by_url(node[:url])
+                next if result == nil
+                genres[node[:url]] = result
+              }
+            }
+            genres
           end
 
-          def fetch_genre_url(result)
+          def fetch_by_url(url)
+            genres_page = fetch_url_to_genres_page(url)
+            return nil unless genres_page[:url]
+
+            ##
+            # Fetch genres list
+            #
+            fetch_genres(genres_page)
+          end
+
+          def fetch_genres(result)
             html = Service::Document::fetch(
               Service::Fs2Ua::get_base_url + result[:url].sub('//' + Fs2Ua::HOSTNAME, '')
             )
@@ -90,6 +76,29 @@ module Service
                   }]
               }
             )
+            fetcher.fetch(html)
+          end
+
+          protected
+
+          def fetch_url_to_genres_page(url)
+            html = Service::Document::fetch(
+              Service::Fs2Ua::get_base_url + url
+            )
+            return nil if html == nil
+
+            # Fetch genre URL
+            fetcher = HtmlReader::Page::EntityFetcher.new
+            fetcher.set_instructions(
+              [
+                {
+                  :selector => "a:contains('" + GENRE_LABEL + "')",
+                  :data     => {
+                    :url => {:type => :attribute, :attribute => 'href'},
+                  },
+                }]
+            )
+
             fetcher.fetch(html)
           end
 
