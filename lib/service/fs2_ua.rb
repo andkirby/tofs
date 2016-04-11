@@ -7,6 +7,8 @@ require 'pp'
 
 module Service
   module Fs2Ua
+    module_function
+
     HOSTNAME = "\x66\x73\x2E\x74\x6F"
 
     def get_base_url
@@ -26,11 +28,9 @@ module Service
                         ' ' + get_base_url + item[:url]
 
         if item[:_children]
-          show(item[:_children], level + 1)
+          show_menu(item[:_children], level + 1)
         end
       }
     end
-
-    module_function :get_base_url, :show
   end
 end
