@@ -19,8 +19,18 @@ module Service
             return years if nil != years
 
             # grab years
-            menu   = Service::Fs2Ua::Api::Category::Menu.new.fetch
+            menu  = Service::Fs2Ua::Api::Category::Menu.new.fetch
             years = fetch_by_menu(menu)
+            years = years.each { |i, group|
+              group.each { |node|
+                # convert 90 to 1990
+                node[:label] = '19' + node[:label] if node[:label].length == 2
+                # convert "30s and earlier"
+                node[:label] = '19' + node[:label] if node[:label] ==
+                  "\x33\x30\x2D\xD0\xB5\x20\xD0\xB8\x20\xD1\x80\xD0\xB0\xD0\xBD\xD0\xB5\xD0\xB5"
+              }
+              years[i] = group.sort_by! { |node| node[:label] }.reverse
+            }
             # write cache
             get_cacher.put('years', years, 'years')
 
