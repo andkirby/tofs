@@ -28,12 +28,11 @@ module Service
             # grab genres
             menu   = Service::Fs2Ua::Api::Category::Menu.new.fetch
             genres = fetch_by_menu(menu)
-            genres = filter_by_strict(genres)
 
             # write cache
             get_cacher.put('genres', genres, 'genres')
 
-            genres
+            filter_by_strict(genres)
           end
 
           def filter_by_strict(genres)
@@ -45,7 +44,7 @@ module Service
                 }
               }
             end
-            list
+            genres
           end
 
           def fetch_by_menu(menu)
