@@ -12,7 +12,7 @@ module Service
 
       # Init options
       #
-      # @param {Hash} option
+      # @param [Hash] options
 
       def initialize(options = {})
         @base_name         = options[:base_name]
@@ -64,23 +64,44 @@ module Service
 
       protected
 
+      ##
+      # Get cache file
+      #
+      # @param [String] namespace
+      # @param [TrueClass FalseClass] use_base_name
+      # @return [string]
+
       def get_cache_file(namespace, use_base_name)
         file = @cache_dir + '/' +
           (use_base_name ? get_base_cache_key + '/' : '') +
-          (namespace || 'main') + '.txt'
+          (safe_name(namespace) || 'main') + '.txt'
         # TODO Check writing
         FileUtils.mkpath File.dirname(file)
         file
       end
 
+      ##
+      # Get base cache key
+      #
+      # @return [String]
+
       def get_base_cache_key
         return @base_cache_key if @base_cache_key
-        @base_cache_key = @base_name.gsub('/', '-',)
-                            .gsub(':', '-')
-                            .gsub('?', '-')
-                            .gsub('&', '-')
-                            .gsub('=', '-')
-                            .gsub('.', '-')
+        @base_cache_key = safe_name(@base_name)
+      end
+
+      ##
+      # Make safe string
+      #
+      # @return [String]
+
+      def safe_name(name)
+        name.gsub('/', '-',)
+          .gsub(':', '-')
+          .gsub('?', '-')
+          .gsub('&', '-')
+          .gsub('=', '-')
+          .gsub('.', '-')
       end
     end
   end
