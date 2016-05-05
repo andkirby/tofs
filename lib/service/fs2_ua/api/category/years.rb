@@ -2,6 +2,7 @@ require_relative '../../../../html_reader/page_fetcher'
 require_relative '../../../api/request'
 require_relative '../../../document'
 require_relative '../../../fs2_ua'
+require_relative '../../../fs2_ua/api/cached'
 require_relative 'menu'
 # TODO Refactor to abstract filter type class
 module Service
@@ -9,7 +10,9 @@ module Service
     module Api
       module Category
         class Years
-          GENRE_LABEL = "\xD0\xBF\xD0\xBE\x20\xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB0\xD0\xBC"
+          YEAR_LABEL = "\xD0\xBF\xD0\xBE\x20\xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB0\xD0\xBC"
+
+          include Service::Fs2Ua::Api::Cached
 
           @cacher = nil
 
@@ -100,7 +103,7 @@ module Service
             fetcher.set_instructions(
               [
                 {
-                  :selector => "a:contains('" + GENRE_LABEL + "')",
+                  :selector => "a:contains('" + YEAR_LABEL + "')",
                   :data     => {
                     :url => {:type => :attribute, :attribute => 'href'},
                   },
@@ -110,13 +113,8 @@ module Service
             fetcher.fetch(html)
           end
 
-          def get_cacher
-            return @cacher if nil != @cacher
-            Service::Api::Cacher.new(
-              {
-                :base_name         => Service::Fs2Ua::HOSTNAME,
-                :default_namespace => 'years',
-              })
+          def get_cache_default_namespace
+            'years'
           end
         end
       end

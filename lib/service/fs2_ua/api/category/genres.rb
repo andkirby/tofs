@@ -1,6 +1,7 @@
 require_relative '../../../../html_reader/page_fetcher'
 require_relative '../../../../shell/output'
 require_relative '../../../api/request'
+require_relative '../../../fs2_ua/api/cached'
 require_relative '../../../document'
 require_relative '../../../fs2_ua'
 require_relative 'menu'
@@ -12,6 +13,8 @@ module Service
       module Category
         class Genres
           GENRE_LABEL = "\xD0\xBF\xD0\xBE\x20\xD0\xB6\xD0\xB0\xD0\xBD\xD1\x80\xD0\xB0\xD0\xBC"
+
+          include Service::Fs2Ua::Api::Cached
 
           @cacher = nil
           @strict = true
@@ -120,13 +123,8 @@ module Service
             fetcher.fetch(html)
           end
 
-          def get_cacher
-            return @cacher if nil != @cacher
-            Service::Api::Cacher.new(
-              {
-                :base_name         => Service::Fs2Ua::HOSTNAME,
-                :default_namespace => 'genres',
-              })
+          def get_cache_default_namespace
+            'genres'
           end
 
           def get_ignored_names

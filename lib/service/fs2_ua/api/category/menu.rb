@@ -3,6 +3,7 @@ require_relative '../../../../shell/output'
 require_relative '../../../api/request'
 require_relative '../../../document'
 require_relative '../../../fs2_ua'
+require_relative '../../../fs2_ua/api/cached'
 require 'uri'
 
 module Service
@@ -10,6 +11,8 @@ module Service
     module Api
       module Category
         class Menu
+          include Service::Fs2Ua::Api::Cached
+
           def fetch
             menu = get_cacher.get 'menu', 'menu'
             return menu if nil != menu
@@ -69,10 +72,6 @@ module Service
             result
           end
 
-          def get_cacher
-            Service::Api::Cacher.new({:base_name => Service::Fs2Ua::HOSTNAME})
-          end
-
           def get_menu_instructions
             {
               :block  => {
@@ -100,6 +99,10 @@ module Service
                 }
               ],
             }
+          end
+
+          def get_cache_default_namespace
+            'menu'
           end
         end
       end
