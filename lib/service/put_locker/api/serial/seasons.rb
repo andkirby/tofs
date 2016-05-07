@@ -14,7 +14,7 @@ module Service::PutLocker::Serial
     #
     # @param [String] url   Base season page URL
     # @return [Array]
-    #
+
     def fetch(url)
       list = get_cacher.get 'list-' + url
       return list if nil != list
@@ -43,23 +43,24 @@ module Service::PutLocker::Serial
         :entity => [
           {
             # :selector => 'h2 a.selector_name',
-            :selector => 'h2:has(a)',
+            :selector => 'h2 a',
             :data     => {
               :season => {},
+              :season_url => {:type => :attribute, :attribute => 'href'},
             }
           },
           {
             # :xpath => 'h2[a[@class="selector_name"]]/following-sibling::table',
             :selector => 'h2:has(a) + table',
             :data     => {
-              :series => {
+              :episodes => {
                 :type         => :children,
                 :instructions => [
                   {
                     :selector => 'td a',
                     :data     => {
                       :url          => {:type => :attribute, :attribute => 'href'},
-                      :season_label => {},
+                      :label => {},
                     },
                   }]
               }
