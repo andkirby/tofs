@@ -6,14 +6,7 @@ require_relative 'api/movie'
 
 module Service::PutLocker::SeasonWatcher
   include Service::PutLocker::Api::Cached
-
   module_function
-
-  def send(episodes)
-    episodes.each { |episode|
-      episode
-    }
-  end
 
   ##
   # Get all new episodes by watch URLs list
@@ -40,6 +33,7 @@ module Service::PutLocker::SeasonWatcher
   #
   # @params [Array] updates
   # @return [String]
+  #
   def make_send_message(updates)
     return nil if nil == updates || updates.count == 0
 
@@ -60,10 +54,21 @@ module Service::PutLocker::SeasonWatcher
     message + 'Enjoy!'
   end
 
+  ##
+  # Get serial base info
+  #
+  # @return [Hash]
+  #
   def get_serial_info(url)
     Service::PutLocker::Api::Movie::fetch_info url
   end
 
+  ##
+  # Get URLs for watching
+  #
+  # @param [String] url
+  # @return [Array]
+  #
   def get_serial_new_episodes(url)
     last_episode = get_last_episode(url)
     full_list    = Service::PutLocker::Api::Serial::Seasons::fetch(url)
@@ -90,24 +95,40 @@ module Service::PutLocker::SeasonWatcher
     get_cacher.get 'last-episode-' + url
   end
 
-  def add_to_watch(url)
+  ##
+  # Add URL to watch with possible fetching all and save last episode
+  #
+  # @param [String] url
+  # @return [self]
+  #
+  def add_to_watch(url, fetch = false)
     # add url to the list
     add_url url
     # define last movie episode
-    get_serial_new_episodes url
+    get_serial_new_episodes url if fetch
     self
   end
 
+  ##
+  # Get URLs for watching
+  #
+  # @return [Array]
+  #
   def get_watch_list
     get_cacher.get('urls') || []
   end
 
+  ##
+  # Add URL for watching
+  #
+  # @return [Array]
+  #
   def add_url(url)
     # [Array] list
     list = get_cacher.get('urls') || []
     return self if list.include?(url)
 
-    check_url(url)
+    valid_url?(url)
 
     list.push url
     get_cacher.put 'urls', list
@@ -115,7 +136,12 @@ module Service::PutLocker::SeasonWatcher
     self
   end
 
-  def check_url(url)
+  ##
+  # Check if URL matched with base one
+  #
+  # @return [Array]
+  #
+  def valid_url?(url)
     until 0 == url.index(Service::PutLocker::get_base_url + '/')
       raise Service::PutLocker::Error,
             "The url '#{url}' doesn't belong to " + Service::PutLocker::get_base_url + '.'
@@ -126,6 +152,11 @@ module Service::PutLocker::SeasonWatcher
   protected
   module_function
 
+  ##
+  # Define last episode in storage
+  #
+  # @return [Hash]
+  #
   def define_last_episode(full_list, url)
     last_episode = get_list_last_episode(full_list)
     set_last_episode(
@@ -135,10 +166,21 @@ module Service::PutLocker::SeasonWatcher
     last_episode
   end
 
+  ##
+  # Get last episode
+  #
+  # @return [Hash]
+  #
   def get_list_last_episode(seasons)
     get_episode_data(seasons[-1], seasons[-1][:episodes][-1])
   end
 
+  ##
+  # Get complete episode data
+  # It will add season base data
+  #
+  # @return [Hash]
+  #
   def get_episode_data(season, episode)
     episode[:season]       = season[:season]
     episode[:season_index] = season[:season_index]
@@ -146,6 +188,11 @@ module Service::PutLocker::SeasonWatcher
     episode
   end
 
+  ##
+  # Get new episodes since last episode
+  #
+  # @return [Array]
+  #
   def get_new_episodes(seasons, last_episode)
     new_episodes = []
     seasons.each { |season|
@@ -165,8 +212,13 @@ module Service::PutLocker::SeasonWatcher
     new_episodes
   end
 
+  ##
+  # Set last episode to storage
+  #
+  # @param [String] url
+  # @param [Hash] last_episode
   # @return [self]
-
+  #
   def set_last_episode(url, last_episode)
     get_cacher.put 'last-episode-' + url, last_episode
     self
@@ -176,7 +228,7 @@ module Service::PutLocker::SeasonWatcher
   # Get default namespace
   #
   # @return [String]
-
+  #
   def get_cache_default_namespace
     'season_watcher'
   end

@@ -17,7 +17,7 @@ module Service
         # Fetch movie info
         #
         # @param [String] url   Base season page URL
-        # @return [Array]
+        # @return [Hash]
 
         def fetch_info(url)
           info = get_cacher.get 'info-' + url
