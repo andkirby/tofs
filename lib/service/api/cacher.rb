@@ -58,8 +58,10 @@ module Service
       # @param [String] namespace
       # @return [string]
 
-      def put(key, value, namespace = nil)
-        get_adapter(namespace).put(key, value)
+      def put(key, value, namespace = nil, timeout = nil)
+        timeout = get_adapter(namespace).default_timeout if timeout == nil
+        get_adapter(namespace).put(key, value, timeout)
+        self
       end
 
       protected
@@ -74,7 +76,7 @@ module Service
       def get_cache_file(namespace, use_base_name)
         file = @cache_dir + '/' +
           (use_base_name ? get_base_cache_key + '/' : '') +
-          (safe_name(namespace) || 'main') + '.txt'
+          (namespace ? safe_name(namespace) : 'main') + '.txt'
         # TODO Check writing
         FileUtils.mkpath File.dirname(file)
         file
@@ -96,6 +98,8 @@ module Service
       # @return [String]
 
       def safe_name(name)
+        raise "It's not a string." until name.instance_of? String
+
         name.gsub('/', '-',)
           .gsub(':', '-')
           .gsub('?', '-')
