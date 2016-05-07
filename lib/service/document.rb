@@ -1,6 +1,7 @@
-require 'rest_client'
 require 'nokogiri'
 require 'colorize'
+require_relative '../shell/output'
+require_relative 'api/request'
 
 module Service
   module Document
