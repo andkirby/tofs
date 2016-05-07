@@ -14,6 +14,9 @@ gem 'rest-client'
 # Colorize CLI output
 gem 'colorize'
 
+# Slack notification
+gem 'slack-notifier'
+
 # Backend caching
 gem 'timedcache'
 gem 'highline'
