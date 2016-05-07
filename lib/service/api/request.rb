@@ -20,10 +20,14 @@ module Service
       end
 
       def execute(url)
-        String.new(RestClient.get(url))
+        String.new(get_query(url))
       end
 
-      module_function :execute, :request
+      def get_query(url)
+        RestClient.get(url)
+      end
+
+      module_function :execute, :request, :get_query
     end
   end
 end
