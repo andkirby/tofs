@@ -45,8 +45,14 @@ module Service::PutLocker::Serial
             # :selector => 'h2 a.selector_name',
             :selector => 'h2 a',
             :data     => {
-              :season => {},
+              :season     => {},
               :season_url => {:type => :attribute, :attribute => 'href'},
+              :season_index   => {
+                :type => :function,
+                :function => Proc.new { |name, instruction, data, options|
+                  /\d+/.match(data[:season]).to_s.to_i
+                },
+              },
             }
           },
           {
@@ -59,8 +65,14 @@ module Service::PutLocker::Serial
                   {
                     :selector => 'td a',
                     :data     => {
-                      :url          => {:type => :attribute, :attribute => 'href'},
+                      :url   => {:type => :attribute, :attribute => 'href'},
                       :label => {},
+                      :index   => {
+                        :type => :function,
+                        :function => Proc.new { |name, instruction, data, options|
+                          /\d+/.match(data[:label]).to_s.to_i
+                        },
+                      },
                     },
                   }]
               }
