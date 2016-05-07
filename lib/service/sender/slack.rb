@@ -12,6 +12,8 @@ module Service
       # @return [Net::HTTPResponse]
       #
       def send(message, options = {})
+        return until message
+
         init_client.ping message
       end
 
@@ -21,7 +23,7 @@ module Service
       # @return [Slack::Notifier]
       #
       def init_client
-        notifier = Slack::Notifier.new @options[:service_url]
+        notifier = Slack::Notifier.new @options[:webhook_url]
         if @options[:channel]
           notifier.channel = @options[:channel]
         end
