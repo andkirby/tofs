@@ -23,7 +23,7 @@ module Service
           {
             :base_name         => get_cache_basename,
             :default_namespace => get_cache_default_namespace,
-          }.merge get_cacher_options
+          }.merge get_cache_options
         )
       end
 
@@ -32,7 +32,7 @@ module Service
       #
       # @return [Hash]
 
-      def get_cacher_options
+      def get_cache_options
         {}
       end
 
@@ -45,7 +45,7 @@ module Service
       #
       # @return [String]
 
-      def get_cache_basename
+      def self.get_cache_basename
         raise Error, 'Method "get_cache_basename" is not implemented.'
       end
 
@@ -56,7 +56,7 @@ module Service
       #
       # @return [String]
 
-      def get_cache_default_namespace
+      def self.get_cache_default_namespace
         '_default'
       end
     end
