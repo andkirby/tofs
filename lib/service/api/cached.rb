@@ -27,6 +27,8 @@ module Service
         )
       end
 
+      protected
+
       ##
       # Get custom cache adapter options
       #
@@ -45,7 +47,7 @@ module Service
       #
       # @return [String]
 
-      def self.get_cache_basename
+      def get_cache_basename
         raise Error, 'Method "get_cache_basename" is not implemented.'
       end
 
