@@ -5,8 +5,9 @@ require_relative '../../../../service/put_locker/api/cached'
 
 module Service::PutLocker::Serial
   module Seasons
-    module_function
+    # Include caching methods
     include Service::PutLocker::Api::Cached
+    module_function
 
     ##
     # Fetch seasons and serials presented on the page
@@ -28,12 +29,13 @@ module Service::PutLocker::Serial
     end
 
     protected
+    module_function
 
     def get_document(url)
       Service::Document::fetch(url)
     end
 
-    def get_instructions
+    def self.get_instructions
       {
         :block  => {
           :selector => 'div.content-box'
@@ -80,7 +82,7 @@ module Service::PutLocker::Serial
       'seasons'
     end
 
-    # module_function :get_cacher, :get_cache_basename, :get_cache_default_namespace,
-    #                 :get_cache_options, :get_instructions, :get_document
+    # Declare included module functions
+    module_function :get_cacher, :get_cache_basename
   end
 end
