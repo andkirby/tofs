@@ -15,6 +15,11 @@ module Service
         init_client.ping message
       end
 
+      ##
+      # Init slack notifier
+      #
+      # @return [Slack::Notifier]
+      #
       def init_client
         notifier = Slack::Notifier.new @options[:service_url]
         if @options[:channel]

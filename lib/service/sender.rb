@@ -1,3 +1,4 @@
+require_relative 'sender/slack'
 
 module Service
   module Sender
