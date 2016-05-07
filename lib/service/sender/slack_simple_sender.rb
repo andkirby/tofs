@@ -1,9 +1,13 @@
 require_relative 'sender_abstract'
-require 'slack-notifier'
+require 'net/http'
+require 'uri'
+require 'rubygems'
+require 'openssl'
+
 
 module Service
   module Sender
-    class Slack < SenderAbstract
+    class SlackSimpleSender < SenderAbstract
       ##
       # Send message to slack webhook
       #
@@ -14,13 +18,23 @@ module Service
       def send(message, options = {})
         return until message
 
-        init_client.ping message
+        uri = URI.parse(@options[:webhook_url])
+
+        http             = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl     = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+        request = Net::HTTP::Post.new(uri.request_uri)
+        request.set_form_data(:payload => '{"text":"' + message + '"}')
+        request.add_field('Accept', 'application/json')
+
+        http.request(request)
       end
 
       ##
       # Init slack notifier
       #
-      # @return [Slack::Notifier]
+      # @return [SlackSender::Notifier]
       #
       def init_client
         notifier = Slack::Notifier.new @options[:webhook_url]
