@@ -22,6 +22,8 @@ module HtmlReader
     def fetch_nodes(document, instruction)
       if instruction[:selector]
         document.css(instruction[:selector])
+      elsif instruction[:css]
+        document.css(instruction[:css])
       elsif instruction[:xpath]
         document.xpath(instruction[:xpath])
       end
