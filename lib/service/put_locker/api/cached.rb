@@ -6,6 +6,8 @@ module Service::PutLocker::Api
   module Cached
     include Service::Api::Cached
 
+    protected
+
     ##
     # Get cache basename
     #
