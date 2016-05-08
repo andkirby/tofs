@@ -55,7 +55,8 @@ module Service
       # Write cache
       #
       # @param [String] key
-      # @param [String] namespace
+      # @param [String, NilClass] namespace
+      # @param [Integer, NilClass] timeout
       # @return [string]
 
       def put(key, value, namespace = nil, timeout = nil)
