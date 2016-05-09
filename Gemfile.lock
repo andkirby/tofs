@@ -23,6 +23,9 @@ GEM
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
     slack-notifier (1.5.1)
+    sqlite3 (1.3.11-x64-mingw32)
+    sqlite3-ruby (1.3.3)
+      sqlite3 (>= 1.3.3)
     test-unit (3.1.8)
       power_assert
     timedcache (0.4.0)
@@ -40,8 +43,9 @@ DEPENDENCIES
   nokogiri
   rest-client
   slack-notifier
+  sqlite3-ruby
   test-unit (~> 3.1)
   timedcache
 
 BUNDLED WITH
-   1.11.2
+   1.12.3

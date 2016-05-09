@@ -17,6 +17,8 @@ gem 'colorize'
 # Slack notification
 gem 'slack-notifier'
 
+gem 'sqlite3-ruby'
+
 # Backend caching
 gem 'timedcache'
 gem 'highline'
