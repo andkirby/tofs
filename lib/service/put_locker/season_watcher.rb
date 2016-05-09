@@ -131,7 +131,9 @@ module Service::PutLocker::SeasonWatcher
     valid_url?(url)
 
     list.push url
-    get_cacher.put 'urls', list
+
+    timeout = 3600 * 24 * 365 * 5 # set long timeout
+    get_cacher.put 'urls', list, nil, timeout
 
     self
   end
