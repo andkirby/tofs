@@ -79,7 +79,9 @@ module HtmlReader
       # @return [self]
 
       def get_children(name, instruction, node)
-        instruction = instruction[:instructions] == :the_same ? @options[:instructions] : instruction
+        instruction = instruction[:instructions] == :the_same ?
+          @options[:instructions] : instruction[:instructions]
+
         Page::EntityFetcher.new.
           set_instructions(instruction).
           fetch(node, true)
