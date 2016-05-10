@@ -24,7 +24,7 @@ gem 'timedcache'
 gem 'highline'
 
 # Web server
-# gem 'sinatra'
+gem 'sinatra'
 
 
 # gem 'autoloader', '~> 0.0.2'
