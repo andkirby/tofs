@@ -42,7 +42,7 @@ module Service
             }
           )
           info = fetcher.fetch(get_document(url))
-          return nil until info
+          return nil unless info
 
           info = info.first
           get_cacher.put 'info-' + url, info

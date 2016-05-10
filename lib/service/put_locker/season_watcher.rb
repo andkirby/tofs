@@ -74,6 +74,7 @@ module Service::PutLocker::SeasonWatcher
     full_list    = Service::PutLocker::Api::Serial::Seasons::fetch(url)
 
     if last_episode
+      # last_episode[:index] = last_episode[:index] - 2
       seasons      = full_list.select { |item|
         item[:season_index] >= last_episode[:season_index]
       }
@@ -144,7 +145,7 @@ module Service::PutLocker::SeasonWatcher
   # @return [Array]
   #
   def valid_url?(url)
-    until 0 == url.index(Service::PutLocker::get_base_url + '/')
+    unless 0 == url.index(Service::PutLocker::get_base_url + '/')
       raise Service::PutLocker::Error,
             "The url '#{url}' doesn't belong to " + Service::PutLocker::get_base_url + '.'
     end

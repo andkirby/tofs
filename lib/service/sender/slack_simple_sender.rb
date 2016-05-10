@@ -16,7 +16,7 @@ module Service
       # @return [Net::HTTPResponse]
       #
       def send(message, options = {})
-        return until message
+        return unless message
 
         uri = URI.parse(@options[:webhook_url])
 

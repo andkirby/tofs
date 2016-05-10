@@ -99,7 +99,7 @@ module Service
       # @return [String]
 
       def safe_name(name)
-        raise "It's not a string." until name.instance_of? String
+        raise "It's not a string." unless name.instance_of? String
 
         name.gsub('/', '-',)
           .gsub(':', '-')

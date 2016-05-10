@@ -13,7 +13,7 @@ module Service
       # @return [Net::HTTPResponse]
       #
       def send(message, options = {})
-        return until message
+        return unless message
 
         init_client.ping message
       end
