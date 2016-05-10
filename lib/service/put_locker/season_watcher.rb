@@ -223,7 +223,9 @@ module Service::PutLocker::SeasonWatcher
   # @return [self]
   #
   def set_last_episode(url, last_episode)
-    get_cacher.put 'last-episode-' + url, last_episode
+    timeout = 3600 * 24 * 365 * 5 # set long timeout
+    get_cacher.put 'last-episode-' + url, last_episode, nil, timeout
+
     self
   end
 
