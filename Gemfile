@@ -26,5 +26,7 @@ gem 'highline'
 # Web server
 gem 'sinatra'
 
+# CLI tool
+gem 'commander'
 
 # gem 'autoloader', '~> 0.0.2'
