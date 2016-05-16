@@ -30,7 +30,7 @@ module Service
           debug '@base_name '.yellow + @base_name
           debug '@timeout '.yellow + @timeout.to_s
           debug '@cache_dir '.yellow + @cache_dir
-          debug '@default_namespace '.yellow + @default_namespace
+          debug '@default_namespace '.yellow + @default_namespace.to_s
         end
       end
 
@@ -59,7 +59,11 @@ module Service
       # @return [string]
 
       def get(key, namespace = nil)
-        debug(__method__.to_s + ' key:'.yellow + " #{key}, " + 'ns:'.yellow + " #{namespace}") if @debug
+        # debug
+        debug(__method__.to_s.cyan + ' key:'.yellow + " #{key}, " +
+                'ns:'.yellow + ' ' +
+                (namespace || @default_namespace).to_s) if @debug
+
         get_adapter(namespace).get(key)
       end
 
@@ -73,8 +77,12 @@ module Service
 
       def put(key, value, namespace = nil, timeout = nil)
         timeout = get_adapter(namespace).default_timeout if timeout == nil
-        debug(__method__ + ' key:'.yellow + " #{key}, " + 'ns:'.yellow +
-                " #{namespace}" + 'timeout:'.yellow + " #{timeout}") if @debug
+
+        # debug
+        debug(__method__.to_s.cyan + ' key:'.yellow + " #{key}, " + 'ns:'.yellow +
+                ' ' + (namespace || @default_namespace).to_s +
+                'timeout:'.yellow + " #{timeout}") if @debug
+
         get_adapter(namespace).put(key, value, timeout)
         self
       end
