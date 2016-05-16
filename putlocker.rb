@@ -47,14 +47,26 @@ module Service
             end
           end
 
-          command :url do |c|
-            c.syntax      = 'putlocker url URL'
+          command :explain do |c|
+            c.syntax      = 'putlocker explain [URL]'
             c.summary     = ''
-            c.description = 'Show serial information by URL.'
+            c.description = 'Show serial information by URL. URL can be omitted. In this case it will show information about all URLs from "watch list".'
             c.action do |args, options|
-              info = get_api::get_info args.first
-              get_output.simple 'Title: '.yellow + info[:label]
-              get_output.simple 'URL:   '.yellow + info[:url]
+              urls = args.empty? ? get_api::get_urls : args
+
+              urls.each do |url|
+                serial = get_api::get_info url
+                get_output.simple 'Title:         '.yellow + serial[:label].green
+                get_output.simple 'URL:           '.yellow + serial[:url]
+                last_episode = get_api::get_last_episode url
+                if last_episode
+                  get_output.inline 'Last episode:  '.yellow +
+                                      'Season ' + last_episode[:season_index].to_s +
+                                      ' Episode ' + last_episode[:index].to_s
+                else
+                  get_output.inline 'Last episode:  '.yellow + 'No'.light_red
+                end
+              end
             end
           end
 
