@@ -94,6 +94,22 @@ module Service
             end
           end
 
+          command :'slack webhook' do |c|
+            c.syntax      = 'putlocker slack webhook [URL]'
+            c.summary     = ''
+            c.description = 'Set/get Slack webhook URL.'
+            c.action do |args, options|
+
+              if args.empty?
+                # show current URL
+                url = get_api::get_slack_webhook_url
+                get_output.simple url.to_s if url
+              else
+                get_api::set_slack_webhook_url args.first
+              end
+            end
+          end
+
           run!
         end
       end
