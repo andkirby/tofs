@@ -93,8 +93,11 @@ module Service
 
         # @return [Service::Sender::SenderAbstract]
         def get_sender
+          url = get_slack_webhook_url
+          raise CommandError, 'Slack webhook URL is not defined.' unless url
+
           Service::Sender::get(:slack_simple).new(
-            {:webhook_url => get_slack_webhook_url}
+            {:webhook_url => url}
           )
         end
 
@@ -104,9 +107,7 @@ module Service
         # @return [self]
         #
         def get_slack_webhook_url
-          url = get_cacher.get 'slack-webhook-url'
-          raise CommandError, 'Slack webhook URL is not defined.' unless url
-          url
+          get_cacher.get 'slack-webhook-url'
         end
 
         ##
