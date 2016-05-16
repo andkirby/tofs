@@ -1,6 +1,7 @@
 require 'slack-notifier'
 require 'colorize'
 
+require_relative 'command_error'
 require_relative '../api/cached'
 require_relative '../../sender'
 require_relative '../season_watcher'
@@ -10,13 +11,12 @@ module Service
   module PutLocker
     module Cli
       module PutLockerApi
-        module_function
-
         include Service::PutLocker::Api::Cached
+        module_function
 
         def add_urls(urls)
           raise ArgumentError, 'Non-Array argument.' unless urls.instance_of? Array
-          raise 'Empty urls list.' if urls.empty?
+          raise CommandError, 'Empty urls list.' if urls.empty?
 
           urls.each { |url| get_watcher::add_to_watch url }
           self
@@ -105,7 +105,7 @@ module Service
         #
         def get_slack_webhook_url
           url = get_cacher.get 'slack-webhook-url'
-          raise 'Slack webhook URL is not defined.' unless url
+          raise CommandError, 'Slack webhook URL is not defined.' unless url
           url
         end
 
@@ -116,7 +116,7 @@ module Service
         # @return [self]
         #
         def set_slack_webhook_url(url)
-          raise 'Slack webhook URL is empty.' unless url
+          raise CommandError, 'Slack webhook URL is empty.' unless url
           timeout = 24 * 3600 * 365 * 5
           get_cacher.put 'slack-webhook-url', url, nil, timeout
           self
@@ -142,6 +142,9 @@ module Service
         def self.get_cache_default_namespace
           'cli'
         end
+
+        # Declare included module functions
+        module_function :get_cacher, :get_cache_basename, :get_cache_options
       end
     end
   end
