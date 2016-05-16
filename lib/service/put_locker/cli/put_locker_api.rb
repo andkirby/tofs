@@ -46,6 +46,16 @@ module Service
         end
 
         ##
+        # Get last episode
+        #
+        # @param [String] url
+        # @return [Hash]
+        #
+        def fetch_last_episode(url)
+          get_watcher::get_serial_new_episodes(url).last
+        end
+
+        ##
         # Fetch new episodes
         #
         # @param [TrueClass, FalseClass] remember_last Save last episodes

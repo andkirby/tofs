@@ -51,20 +51,29 @@ module Service
             c.syntax      = 'putlocker explain [URL]'
             c.summary     = ''
             c.description = 'Show serial information by URL. URL can be omitted. In this case it will show information about all URLs from "watch list".'
+            c.option '--test', 'Try to fetch new last episode.'
             c.action do |args, options|
               urls = args.empty? ? get_api::get_urls : args
 
               urls.each do |url|
+
+                # Serial info
                 serial = get_api::get_info url
                 get_output.simple 'Title:         '.yellow + serial[:label].green
                 get_output.simple 'URL:           '.yellow + serial[:url]
-                last_episode = get_api::get_last_episode url
+
+                # Last episode info
+                # fetch the latest online episode
+                the_latest_episode = options.test ? get_api::fetch_last_episode(url) : false
+                last_episode = the_latest_episode || get_api::get_last_episode(url)
                 if last_episode
-                  get_output.inline 'Last episode:  '.yellow +
+                  label = the_latest_episode ? 'Last episode (UPD):'.red : 'Last episode:  '.yellow
+
+                  get_output.simple label +
                                       'Season ' + last_episode[:season_index].to_s +
                                       ' Episode ' + last_episode[:index].to_s
                 else
-                  get_output.inline 'Last episode:  '.yellow + 'No'.light_red
+                  get_output.simple 'Last episode:  '.yellow + 'No'.light_red
                 end
               end
             end
