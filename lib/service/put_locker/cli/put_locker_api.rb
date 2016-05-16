@@ -2,6 +2,7 @@ require 'slack-notifier'
 require 'colorize'
 
 require_relative '../api/cached'
+require_relative '../../sender'
 require_relative '../season_watcher'
 require_relative '../api/serial/seasons'
 
