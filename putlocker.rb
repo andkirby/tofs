@@ -47,6 +47,17 @@ module Service
             end
           end
 
+          command :url do |c|
+            c.syntax      = 'putlocker url URL'
+            c.summary     = ''
+            c.description = 'Show serial information by URL.'
+            c.action do |args, options|
+              info = get_api::get_info args.first
+              get_output.simple 'Title: '.yellow + info[:label]
+              get_output.simple 'URL:   '.yellow + info[:url]
+            end
+          end
+
           run!
         end
       end

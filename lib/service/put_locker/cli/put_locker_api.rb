@@ -26,6 +26,16 @@ module Service
         end
 
         ##
+        # Get serial info
+        #
+        # @param [String] url
+        # @return [Hash]
+        #
+        def get_info(url)
+          get_watcher::get_serial_info url
+        end
+
+        ##
         # Fetch new episodes
         #
         # @param [TrueClass, FalseClass] remember_last Save last episodes
