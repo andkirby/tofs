@@ -9,6 +9,7 @@ module Service
       @base_name
       @use_base_name
       @timeout
+      @debug = false
 
       # Init options
       #
@@ -21,6 +22,16 @@ module Service
         @cache_dir         = options[:cache_dir] || __dir__ + '/../../../.cache'
         @use_base_name     = (options.key? :use_base_name) ? options[:use_base_name] : true
         @adapters          = {}
+        @debug             = !!options[:debug]
+
+        require 'colorize' if @debug
+
+        if @debug
+          debug '@base_name '.yellow + @base_name
+          debug '@timeout '.yellow + @timeout.to_s
+          debug '@cache_dir '.yellow + @cache_dir
+          debug '@default_namespace '.yellow + @default_namespace
+        end
       end
 
       ##
@@ -48,6 +59,7 @@ module Service
       # @return [string]
 
       def get(key, namespace = nil)
+        debug(__method__.to_s + ' key:'.yellow + " #{key}, " + 'ns:'.yellow + " #{namespace}") if @debug
         get_adapter(namespace).get(key)
       end
 
@@ -61,6 +73,8 @@ module Service
 
       def put(key, value, namespace = nil, timeout = nil)
         timeout = get_adapter(namespace).default_timeout if timeout == nil
+        debug(__method__ + ' key:'.yellow + " #{key}, " + 'ns:'.yellow +
+                " #{namespace}" + 'timeout:'.yellow + " #{timeout}") if @debug
         get_adapter(namespace).put(key, value, timeout)
         self
       end
@@ -107,6 +121,11 @@ module Service
           .gsub('&', '-')
           .gsub('=', '-')
           .gsub('.', '-')
+      end
+
+      def debug(value)
+        puts('DEBUG: '.red + value.to_s)
+        self
       end
     end
   end
