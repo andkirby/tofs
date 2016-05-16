@@ -11,12 +11,13 @@ module Service::PutLocker::SeasonWatcher
   ##
   # Get all new episodes by watch URLs list
   #
+  # @param [TrueClass, FalseClass] remember_last Save last episodes
   # @return [Array]
   #
-  def get_all_new_episodes
+  def get_all_new_episodes(remember_last = false)
     all_list = []
     get_watch_list.each { |url|
-      update = get_serial_new_episodes url
+      update = get_serial_new_episodes url, remember_last
       next if update.count == 0
       all_list.push(
         {
@@ -67,9 +68,10 @@ module Service::PutLocker::SeasonWatcher
   # Get URLs for watching
   #
   # @param [String] url
+  # @param [TrueClass, FalseClass] remember Save last episodes
   # @return [Array]
   #
-  def get_serial_new_episodes(url)
+  def get_serial_new_episodes(url, remember = false)
     last_episode = get_last_episode(url)
     full_list    = Service::PutLocker::Api::Serial::Seasons::fetch(url)
 
@@ -83,7 +85,7 @@ module Service::PutLocker::SeasonWatcher
       new_episodes = get_new_episodes(full_list, {})
     end
 
-    if new_episodes
+    if remember && new_episodes
       # set_last_episode url, new_episodes.last
       set_last_episode url, new_episodes[-1]
     end
@@ -106,7 +108,7 @@ module Service::PutLocker::SeasonWatcher
     # add url to the list
     add_url url
     # define last movie episode
-    get_serial_new_episodes url if fetch
+    get_serial_new_episodes(url, true) if fetch
     self
   end
 
