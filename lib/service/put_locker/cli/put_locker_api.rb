@@ -83,9 +83,13 @@ module Service
         #
         # @return [String] Output message
         def send_news_message
-          message = fetch_news_message true
+          message = fetch_news_message
           get_sender.send(message)
 
+          # cache last episodes after sent request
+          fetch_new_episodes true
+
+          # TODO Return cli-human readable message
           message
         end
 
