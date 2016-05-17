@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require_relative 'lib/service/put_locker/cli/command_point'
+require_relative '../lib/service/put_locker/cli/command_point'
 
 module Service
   module PutLocker
