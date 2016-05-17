@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'commander'
 require_relative 'lib/shell/output'
-require_relative 'lib/service/put_locker/cli/put_locker_api'
+require_relative 'lib/service/put_locker/cli/command_api'
 
 module Service
   module PutLocker
@@ -16,16 +16,16 @@ module Service
         ##
         # Get CLI API module
         #
-        # @return [Service::PutLocker::Cli::PutLockerApi]
+        # @return [Service::PutLocker::Cli::CommandApi]
         #
         def get_api
-          Service::PutLocker::Cli::PutLockerApi
+          Service::PutLocker::Cli::CommandApi
         end
 
         ##
         # Get CLI API module
         #
-        # @return [Service::PutLocker::Cli::PutLockerApi]
+        # @return [Service::PutLocker::Cli::CommandApi]
         #
         def get_output
           @output = Shell::Output unless @output

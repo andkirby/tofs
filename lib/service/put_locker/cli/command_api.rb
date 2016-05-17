@@ -10,7 +10,7 @@ require_relative '../api/serial/seasons'
 module Service
   module PutLocker
     module Cli
-      module PutLockerApi
+      module CommandApi
         include Service::PutLocker::Api::Cached
         module_function
 
