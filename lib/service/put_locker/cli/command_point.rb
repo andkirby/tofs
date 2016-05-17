@@ -4,6 +4,7 @@ require 'commander'
 require_relative '../../../shell/output'
 require_relative 'command_api'
 require_relative 'command/urls'
+require_relative 'command/send'
 require_relative 'command/explain'
 require_relative 'command/slack_webhook'
 
