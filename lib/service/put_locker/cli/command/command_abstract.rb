@@ -12,9 +12,20 @@ module Service
           ##
           # Execute command
           #
-          # @return void
+          def execute(args, options)
+            raise 'The method "' + __method__.to_s + '" is implemented.'
+          end
+
+          ##
+          # Initialize command
           #
-          def execute
+          # @param [Commander::Command] command
+          #
+          def init_command(command)
+            # Example of code
+            # command.syntax      = 'putlocker urls'
+            # command.summary     = ''
+            # command.description = 'Show URLs watch list.'
             raise 'The method "' + __method__.to_s + '" is implemented.'
           end
 

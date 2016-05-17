@@ -11,5 +11,16 @@ module Service::PutLocker::Cli::Command
     def execute(args, options)
       get_api::get_urls.each { |url| get_output.simple url }
     end
+
+    ##
+    # Initialize command
+    #
+    # @param [Commander::Command] command
+    #
+    def init_command(command)
+      command.syntax      = 'putlocker urls'
+      command.summary     = ''
+      command.description = 'Show URLs watch list.'
+    end
   end
 end
