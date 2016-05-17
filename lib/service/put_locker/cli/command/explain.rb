@@ -42,10 +42,10 @@ module Service::PutLocker::Cli::Command
     # @param [Commander::Command] command
     #
     def init_command(command)
-      command.syntax      = 'putlocker explain [URL]'
-      command.summary     = ''
-      command.description = 'Show serial information by URL. URL can be omitted. ' +
-        'In this case it will show information about all URLs from "watch list".'
+      command.syntax      = 'putlocker explain [URL, URL2, URLn]'
+      command.summary     = 'Show serial information.'
+      command.description = 'Show serial information by URL. ' +
+        'With omitted URL it will show information about all URLs from "watch list".'
       command.option '--online', 'Try to fetch new last episode.'
     end
   end

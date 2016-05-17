@@ -7,6 +7,7 @@ require_relative '../../sender'
 require_relative '../season_watcher'
 require_relative '../api/serial/seasons'
 
+# API methods for CLI commands
 module Service
   module PutLocker
     module Cli

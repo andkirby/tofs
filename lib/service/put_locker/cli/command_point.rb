@@ -7,6 +7,7 @@ require_relative 'command/urls'
 require_relative 'command/explain'
 require_relative 'command/slack_webhook'
 
+# The main class of "putlocker" commands
 module Service
   module PutLocker
     module Cli

@@ -1,5 +1,6 @@
 require 'commander'
 
+# Error class for exceptions
 module Service
   module PutLocker
     module Cli
