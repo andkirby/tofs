@@ -28,18 +28,7 @@ module Service
           end
 
           command :send do |c|
-            c.syntax      = 'putlocker send'
-            c.summary     = ''
-            c.description = 'Send update about newest episodes.'
-            c.action do |args, options|
-              message = get_api::send_news_message
-
-              if message
-                get_output.simple message.yellow
-              else
-                get_output.simple 'No updates yet.'.red
-              end
-            end
+            prepare c, Cli::Command::Send.new
           end
 
           command :'slack webhook' do |c|

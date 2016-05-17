@@ -10,8 +10,6 @@ module Service::PutLocker::Cli::Command
     # It shows Title, last saved episode of serial
     # If passed option --test it will request last episode from the online page
     #
-    # @return void
-    #
     def execute(args, options)
       urls = args.empty? ? get_api::get_urls : args
 
