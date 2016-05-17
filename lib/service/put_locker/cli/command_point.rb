@@ -5,6 +5,7 @@ require_relative '../../../shell/output'
 require_relative 'command_api'
 require_relative 'command/urls'
 require_relative 'command/explain'
+require_relative 'command/slack_webhook'
 
 module Service
   module PutLocker
@@ -19,33 +20,23 @@ module Service
           program :version, '0.1.0'
           program :description, 'Movie Watcher for putlocker.is service.'
 
+          # region Init commands
           command :urls do |c|
-            prepare c, Cli::Command::Urls.new
+            prepare_command c, Cli::Command::Urls.new
           end
 
           command :explain do |c|
-            prepare c, Cli::Command::Explain.new
+            prepare_command c, Cli::Command::Explain.new
           end
 
           command :send do |c|
-            prepare c, Cli::Command::Send.new
+            prepare_command c, Cli::Command::Send.new
           end
 
           command :'slack webhook' do |c|
-            c.syntax      = 'putlocker slack webhook [URL]'
-            c.summary     = ''
-            c.description = 'Set/get Slack webhook URL.'
-            c.action do |args, options|
-
-              if args.empty?
-                # show current URL
-                url = get_api::get_slack_webhook_url
-                get_output.simple url.to_s if url
-              else
-                get_api::set_slack_webhook_url args.first
-              end
-            end
+            prepare_command c, Cli::Command::SlackWebhook.new
           end
+          # endregion
 
           run!
         end
@@ -58,7 +49,7 @@ module Service
         # @param [Commander::Command] command
         # @param [Service::PutLocker::Cli::Command::CommandAbstract] executor
         #
-        def prepare(command, executor)
+        def prepare_command(command, executor)
           executor.init_command command
           command.action do |args, options|
             executor.execute(args, options)
