@@ -30,6 +30,8 @@ EXPOSE 22
 COPY src /code
 WORKDIR /code
 VOLUME /usr/local/bundle
-RUN bundle install
+RUN bundle install \
+  && gem install ruby-debug-ide \
+  && gem install debase
 
 ENTRYPOINT /usr/sbin/sshd -D -e
