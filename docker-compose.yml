@@ -1,0 +1,10 @@
+version: '3'
+services:
+  builder:
+    container_name: launch2-build
+    build:
+      context: .
+
+    volumes:
+      - './src:/code'
+    entrypoint: sleep infinity
