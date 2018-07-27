@@ -16,11 +16,12 @@ module Bmovies
     # choose menu
     menu_item = request_menu_item
     case request_genres_or_years?
-      when '2'
+    when '2'
         menu_item = request_years(menu_item) || menu_item
-      when '1'
+    when '1'
         menu_item = request_genre(menu_item) || menu_item
-      else
+    else
+      raise 'No case here.'
     end
 
     url = Service::Bmovies::get_base_url + menu_item[:url]
