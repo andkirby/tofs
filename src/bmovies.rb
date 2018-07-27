@@ -2,16 +2,16 @@ require 'pp'
 require 'highline/import'
 require 'colorize'
 
-require_relative 'lib/service/fs2_ua/api/category/menu'
-require_relative 'lib/service/fs2_ua/api/category/years'
-require_relative 'lib/service/fs2_ua/api/category/genres'
+require_relative 'lib/service/bmovies/api/category/menu'
+require_relative 'lib/service/bmovies/api/category/years'
+require_relative 'lib/service/bmovies/api/category/genres'
 require_relative 'lib/shell/output'
 
-module Fs2
+module Bmovies
   module_function
 
   def run
-    Shell::Output::simple Service::Fs2Ua::get_base_url
+    Shell::Output::simple Service::Bmovies::get_base_url
 
     # choose menu
     menu_item = request_menu_item
@@ -23,7 +23,7 @@ module Fs2
       else
     end
 
-    url = Service::Fs2Ua::get_base_url + menu_item[:url]
+    url = Service::Bmovies::get_base_url + menu_item[:url]
 
     puts url
 
@@ -31,7 +31,7 @@ module Fs2
 
   def request_menu_item
     Shell::Output::simple 'Categories:'.green
-    menu_list = Service::Fs2Ua::Api::Category::Menu.new.fetch_linear
+    menu_list = Service::Bmovies::Api::Category::Menu.new.fetch_linear
 
     ii = 0
     menu_list.each { |i, el|
@@ -54,7 +54,7 @@ module Fs2
 
   def request_genre(menu_item)
     Shell::Output::simple 'Genres:'.green
-    genres_list = Service::Fs2Ua::Api::Category::Genres.new.fetch
+    genres_list = Service::Bmovies::Api::Category::Genres.new.fetch
     i = 0
     genres_list[menu_item[:url]].each { |el|
       i += 1
@@ -67,7 +67,7 @@ module Fs2
 
   def request_years(menu_item)
     Shell::Output::simple 'Years:'.green
-    list = Service::Fs2Ua::Api::Category::Years.new.fetch
+    list = Service::Bmovies::Api::Category::Years.new.fetch
     i = 0
     list[menu_item[:url]].each { |el|
       i += 1
@@ -95,4 +95,4 @@ module Fs2
   end
 end
 
-Fs2::run
+Bmovies::run

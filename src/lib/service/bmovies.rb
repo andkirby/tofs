@@ -6,19 +6,20 @@ require 'uri'
 require 'pp'
 
 module Service
-  module Fs2Ua
+  module Bmovies
     module_function
 
-    HOSTNAME = "\x66\x73\x2E\x74\x6F"
+    # current: www7.f.se
+    HOSTNAME = "\x77\x77\x77\x37\x2E\x66\x6D\x6F\x76\x69\x65\x73\x2E\x73\x65"
 
     def get_base_url
-      'http://' + HOSTNAME
+      'https://' + HOSTNAME
     end
 
     def show_menu(menu, level = 0)
       menu.each { |item|
         if item.instance_of? Array
-          return show item, level
+          return show_menu item, level
         end
 
         prefix = '--' * level

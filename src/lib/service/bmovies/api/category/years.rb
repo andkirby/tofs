@@ -1,18 +1,18 @@
 require_relative '../../../../html_reader/page_fetcher'
 require_relative '../../../api/request'
 require_relative '../../../document'
-require_relative '../../../fs2_ua'
-require_relative '../../../fs2_ua/api/cached'
+require_relative '../../../bmovies'
+require_relative '../../../bmovies/api/cached'
 require_relative 'menu'
 # TODO Refactor to abstract filter type class
 module Service
-  module Fs2Ua
+  module Bmovies
     module Api
       module Category
         class Years
           YEAR_LABEL = "\xD0\xBF\xD0\xBE\x20\xD0\xB3\xD0\xBE\xD0\xB4\xD0\xB0\xD0\xBC"
 
-          include Service::Fs2Ua::Api::Cached
+          include Service::Bmovies::Api::Cached
 
           @cacher = nil
 
@@ -22,7 +22,7 @@ module Service
             return years if nil != years
 
             # grab years
-            menu  = Service::Fs2Ua::Api::Category::Menu.new.fetch
+            menu  = Service::Bmovies::Api::Category::Menu.new.fetch
             years = fetch_by_menu(menu)
             years = years.each { |i, group|
               group.each { |node|
@@ -68,7 +68,7 @@ module Service
 
           def fetch_years(result)
             html = Service::Document::fetch(
-              Service::Fs2Ua::get_base_url + result[:url].sub('//' + Fs2Ua::HOSTNAME, '')
+              Service::Bmovies::get_base_url + result[:url].sub('//' + Bmovies::HOSTNAME, '')
             )
 
             return nil if html == nil
@@ -94,7 +94,7 @@ module Service
 
           def fetch_url_to_years_page(url)
             html = Service::Document::fetch(
-              Service::Fs2Ua::get_base_url + url
+              Service::Bmovies::get_base_url + url
             )
             return nil if html == nil
 

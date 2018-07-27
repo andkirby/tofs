@@ -1,8 +1,8 @@
 require_relative '../../../service/api/cached'
-require_relative '../../../service/fs2_ua'
+require_relative '../../../service/bmovies'
 
 # Cache adapter methods
-module Service::Fs2Ua::Api
+module Service::Bmovies::Api
   module Cached
     include Service::Api::Cached
 
@@ -14,7 +14,7 @@ module Service::Fs2Ua::Api
     # @return [String]
     #
     def get_cache_basename
-      Service::Fs2Ua::HOSTNAME
+      Service::Bmovies::HOSTNAME
     end
   end
 end

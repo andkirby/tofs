@@ -2,28 +2,31 @@ require_relative '../../../../html_reader/page_fetcher'
 require_relative '../../../../shell/output'
 require_relative '../../../api/request'
 require_relative '../../../document'
-require_relative '../../../fs2_ua'
-require_relative '../../../fs2_ua/api/cached'
+require_relative '../../../bmovies'
+require_relative '../../../bmovies/api/cached'
 require 'uri'
+require 'pp'
 
 module Service
-  module Fs2Ua
+  module Bmovies
     module Api
       module Category
         class Menu
-          include Service::Fs2Ua::Api::Cached
+          include Service::Bmovies::Api::Cached
 
           def fetch
-            menu = get_cacher.get 'menu', 'menu'
-            return menu if nil != menu
+            # menu = get_cacher.get 'menu', 'menu'
+            # return menu if nil != menu
+
 
             # fetch
             html    = Service::Document::fetch(
-              Service::Fs2Ua::get_base_url, true
+              Service::Bmovies::get_base_url, true
             )
             fetcher = HtmlReader::PageFetcher.new
             fetcher.set_instructions self::get_menu_instructions
             menu = fetcher.fetch(html)
+            pp menu
 
             get_cacher.put 'menu', menu, 'menu'
 
@@ -32,10 +35,10 @@ module Service
 
           def fetch_linear(use_cache = true)
 
-            if use_cache
-              menu = get_cacher.get 'menu-linear', 'menu' if use_cache
-              return menu if nil != menu
-            end
+            # if use_cache
+            #   menu = get_cacher.get 'menu-linear', 'menu' if use_cache
+            #   return menu if nil != menu
+            # end
 
             menu = get_linear_menu(fetch)
             get_cacher.put 'menu-linear', menu, 'menu' if use_cache
@@ -75,11 +78,11 @@ module Service
           def get_menu_instructions
             {
               :block  => {
-                :selector => 'div.b-header__menu'
+                :selector => '#menu'
               },
               :entity => [
                 {
-                  :xpath => 'div/a',
+                  :xpath => 'a',
                   :data  => {
                     :label => {},
                     :url   => {
@@ -89,7 +92,7 @@ module Service
                   }
                 },
                 {
-                  :xpath => 'div/a/following-sibling::div',
+                  :xpath => 'a/following-sibling::li',
                   :data  => {
                     :_children => {
                       :type         => :children,
