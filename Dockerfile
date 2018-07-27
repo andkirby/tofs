@@ -4,7 +4,7 @@ COPY container-files /container-files
 RUN apt-get update -y \
   && curl -Ls bit.ly/bash-init | bash && curl -Ls bit.ly/bash-ps1 | bash \
   # openssh-server
-  && apt-get install -y openssh-server nano htop \
+  && apt-get install -y openssh-server nano htop less \
   && mkdir /var/run/sshd -p \
   && sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd \
   && echo 'export VISIBLE=now' >> /etc/profile \
