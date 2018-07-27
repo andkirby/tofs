@@ -1,7 +1,8 @@
 version: '3'
 services:
   builder:
-    container_name: launch2-build
+    container_name: movinot-ruby
+    hostname: movinot
     build:
       context: .
 
