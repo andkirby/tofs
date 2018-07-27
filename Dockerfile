@@ -2,9 +2,14 @@ FROM ruby:2.5.1
 COPY container-files /container-files
 
 RUN apt-get update -y \
+  # set up config/colors in .bashrc
   && curl -Ls bit.ly/bash-init | bash && curl -Ls bit.ly/bash-ps1 | bash \
   # openssh-server
-  && apt-get install -y openssh-server nano htop less \
+  && apt-get install -y \
+    nano \
+    htop \
+    less \
+    openssh-server \
   && mkdir /var/run/sshd -p \
   && sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd \
   && echo 'export VISIBLE=now' >> /etc/profile \
