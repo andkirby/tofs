@@ -1,6 +1,11 @@
 version: '3'
 services:
   builder:
+    ports:
+      - '6408:80'
+      - '6771:443'
+      - '6350:22'
+      - '9634:3306'
     container_name: movinot-ruby
     hostname: movinot
     build:
