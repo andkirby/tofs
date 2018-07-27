@@ -1,6 +1,6 @@
 version: '3'
 services:
-  builder:
+  app:
     ports:
       - '6408:80'
       - '6771:443'
