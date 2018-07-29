@@ -136,6 +136,107 @@ module HtmlReader
       assert_equal(expected, obj.fetch(html))
     end
 
+    # Test fetching nodes ul-li
+    def test_fetch_ul_li
+      # TODO fix the instuctions or bugs
+      raise 'not implemented yet.'
+
+      obj  = PageFetcher.new
+      html = Nokogiri::HTML(get_content)
+
+      obj.set_instructions(
+          {
+              # block where entities can be found
+              :block        => {
+                  :type     => :selector,
+                  :selector => '#menu/li',
+              },
+              :entity => [
+                  {
+                      :xpath => 'a',
+                      :data  => {
+                          :label => {},
+                          :url   => {
+                              :type      => :attribute,
+                              :attribute => 'href',
+                          }
+                      }
+                  },
+                  {
+                      :xpath => 'a/following-sibling::ul/li',
+                      :data => {
+                          :_children => {
+                              :type      => :children,
+                              :instructions => :the_same
+                          },
+                      },
+                  }
+              ],
+          }
+      )
+
+      # todo mock using EntityFetcher class
+      # region expected
+      expected = [
+          {
+              :label     => 'home',
+              :url       => '',
+          },
+          {
+              :label     => 'Country',
+              :url       => '',
+              :_children => [
+                  {
+                      :label => 'United States',
+                      :url   => '/country/united-states',
+                  },
+                  {
+                      :label => 'United Kingdom',
+                      :url   => '/country/united-kingdom',
+                  },
+              ]
+          },
+          {
+              :label     => 'Movies',
+              :url       => '/movies',
+          },
+          {
+              :label     => 'TV-Series',
+              :url       => '/tv-series',
+          },
+          {
+              :label     => 'A-Z List',
+              :url       => '/az-list',
+          },
+          {
+              :label     => 'Release',
+              :url       => '',
+              :_children => [
+                  {
+                      :label => '2018',
+                      :url   => '/release-2018',
+                  },
+                  {
+                      :label => '2017',
+                      :url   => '/release-2017',
+                  },
+              ]
+          },
+          {
+              :label     => 'Most Watched',
+              :url       => '/most-watched',
+          },
+          {
+              :label     => 'Request',
+              :url       => '#pop-request',
+          },
+      ]
+      # endregion
+
+      result = obj.fetch(html)
+      assert_equal(expected, result)
+    end
+
     def test_last_page
       obj  = PageFetcher.new
       html = Nokogiri::HTML(get_content)

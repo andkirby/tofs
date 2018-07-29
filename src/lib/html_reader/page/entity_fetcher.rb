@@ -81,7 +81,7 @@ module HtmlReader
       # @param [TrueClass, FalseClass] plenty Get plenty of elements or the only one
       # @return [Hash]
 
-      def fetch(document, plenty = false)
+      def fetch(document:, plenty: false)
         if plenty
           fetch_plenty(document)
         else
@@ -133,7 +133,15 @@ module HtmlReader
 
       def fetch_plenty(document)
         collectors = {}
+        unless get_instructions.instance_of? Array
+          raise 'Instructions must be an array.'
+        end
+
         get_instructions.each do |instruction|
+          unless instruction.instance_of? Hash
+            raise 'Instruction must be Hash.'
+          end
+
           nodes = Page::fetch_nodes(document, instruction)
 
           nodes.each_with_index { |node, i|
@@ -150,9 +158,9 @@ module HtmlReader
         end
 
         data = []
-        collectors.each do
+
+        collectors.each do |i, collector|
           # @type [HtmlReader::Page::ValuesCollector] collector
-        |i, collector|
           data.push collector.get_data
         end
 

@@ -110,7 +110,7 @@ module Service
                 }]
             )
 
-            fetcher.fetch(html)
+            fetcher.fetch(document: html)
           end
 
           def get_cache_default_namespace

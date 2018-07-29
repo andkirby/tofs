@@ -84,7 +84,7 @@ module HtmlReader
 
         Page::EntityFetcher.new.
           set_instructions(instruction).
-          fetch(node, true)
+          fetch(document: node, plenty: true)
       end
 
       ##

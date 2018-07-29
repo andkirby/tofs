@@ -15,17 +15,24 @@ module HtmlReader
     ##
     # Get nodes by XPath or CSS selector
     #
-    # @param [Nokogiri::HTML::Document] document
+    # @param [Nokogiri::HTML::Document|Nokogiri::XML::Element] document
     # @param [Hash] instruction
     # @return [Nokogiri::XML::NodeSet]
 
     def fetch_nodes(document, instruction)
+      unless document.instance_of? Nokogiri::HTML::Document or document.instance_of? Nokogiri::XML::Element
+        raise '"document" must be an instance of Nokogiri::HTML::Document.'
+      end
       if instruction[:selector]
         document.css(instruction[:selector])
       elsif instruction[:css]
         document.css(instruction[:css])
       elsif instruction[:xpath]
-        document.xpath(instruction[:xpath])
+        if defined? document.xpath
+          document.xpath(instruction[:xpath])
+        else
+          raise 'Cannot use this document.'
+        end
       end
     end
 

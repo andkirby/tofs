@@ -20,13 +20,12 @@ module Service
 
 
             # fetch
-            html    = Service::Document::fetch(
-              Service::Bmovies::get_base_url, true
+            html = Service::Document::fetch(
+                Service::Bmovies::get_base_url, true
             )
             fetcher = HtmlReader::PageFetcher.new
             fetcher.set_instructions self::get_menu_instructions
             menu = fetcher.fetch(html)
-            pp menu
 
             get_cacher.put 'menu', menu, 'menu'
 
@@ -50,25 +49,25 @@ module Service
 
           def get_linear_menu(menu, parent_name = '', level = 0, count = 0)
             result = {}
-            menu.each { |item|
+            menu.each {|item|
               if item.instance_of? Array
                 return show item, level
               end
 
               if level > 0
-                count         += 1
+                count += 1
                 result[count] = {
-                  :id    => count,
-                  :label => parent_name + '/' + item[:label],
-                  :url   => item[:url]
+                    :id => count,
+                    :label => parent_name.to_s + '/' + item[:label],
+                    :url => item[:url]
                 }
               end
 
               if item[:_children]
                 result = result.merge(
-                  get_linear_menu(
-                    item[:_children], item[:label], level + 1, result.count
-                  )
+                    get_linear_menu(
+                        item[:_children], item[:label], level + 1, result.count
+                    )
                 )
               end
             }
@@ -77,30 +76,33 @@ module Service
 
           def get_menu_instructions
             {
-              :block  => {
-                :selector => '#menu'
-              },
-              :entity => [
-                {
-                  :xpath => 'a',
-                  :data  => {
-                    :label => {},
-                    :url   => {
-                      :type      => :attribute,
-                      :attribute => 'href',
-                    }
-                  }
+                # block where entities can be found
+                :block        => {
+                    :type     => :selector,
+                    :selector => '#menu/li',
                 },
-                {
-                  :xpath => 'a/following-sibling::li',
-                  :data  => {
-                    :_children => {
-                      :type         => :children,
-                      :instructions => :the_same
+                :entity => [
+                    {
+                        :xpath => 'a',
+                        :data  => {
+                            :label => {},
+                            :url   => {
+                                :type      => :attribute,
+                                :attribute => 'href',
+                            },
+                        }
                     },
-                  },
-                }
-              ],
+                    # instruction for child nodes
+                    {
+                        :xpath => 'a/following-sibling::ul/li',
+                        :data => {
+                            :_children => {
+                                :type      => :children,
+                                :instructions => :the_same
+                            },
+                        },
+                    }
+                ],
             }
           end
 
