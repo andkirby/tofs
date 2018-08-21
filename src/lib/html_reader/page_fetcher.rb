@@ -72,9 +72,7 @@ module HtmlReader
     # @return [Nokogiri::XML::NodeSet]
 
     def fetch_block_document(document, instructions)
-      if instructions[:type] == :function
-        return call_function(document, instructions)
-      end
+      return call_function(document, instructions) if instructions[:type] == :function
       Page::fetch_nodes(document, instructions)
     end
 

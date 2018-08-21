@@ -219,6 +219,90 @@ module HtmlReader
       assert_true(obj.last_page?(html))
     end
 
+    def test_two_children
+      obj  = PageFetcher.new
+      html = Nokogiri::HTML(<<-HTML
+<ul>
+  <li>
+    <a href="/home">Home</a>
+  </li>
+  <li>
+    <a href="/plenty">Plenty</a>
+    <ul>
+      <li>
+        <a href="/plenty/one">Plenty One</a>
+      </li>
+      <li>
+        <a href="/plenty/two">Plenty Two</a>
+      </li>
+    </ul>
+  </li>
+</ul>
+HTML
+)
+      obj.set_instructions(
+          {
+              # block where entities can be found
+              :block        => {
+                  :type     => :selector,
+                  :selector => 'ul/li',
+              },
+              :entity => [
+                  # data element instructions
+                  {
+                      :xpath => 'a',
+                      :data  => {
+                          :label => {},
+                          :url   => {
+                              :type      => :attribute,
+                              :attribute => 'href',
+                          }
+                      }
+                  },
+                  # children instructions
+                  # each found element will be process by data element instructions
+                  # because :instructions => :the_same
+                  {
+                      :xpath => 'a/following-sibling::ul/li',
+                      :data => {
+                          :_children => {
+                              :type      => :children,
+                              :instructions => :the_same
+                          },
+                      },
+                  }
+              ],
+          }
+      )
+      # region expected
+      expected = [
+          {
+              :label     => 'Home',
+              :url       => '/home',
+          },
+          {
+              :label     => 'Plenty',
+              :url       => '/plenty',
+              :_children => [
+                  {
+                      :label => 'Plenty One',
+                      :url   => '/plenty/one',
+                  },
+                  {
+                      :label => 'Plenty Two',
+                      :url   => '/plenty/two'
+                  },
+                  {
+                      :label => 'Animation movies',
+                      :url   => '/country/animation'
+                  }
+              ]
+          }
+      ]
+      # endregion
+      assert_equal(expected, obj.fetch(html))
+    end
+
     protected
 
     ##

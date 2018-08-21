@@ -31,7 +31,8 @@ COPY src /code
 WORKDIR /code
 VOLUME /usr/local/bundle
 RUN bundle install \
-  && gem install ruby-debug-ide \
-  && gem install debase
+  && gem install --local \
+        rubymine_gems/ruby-debug-ide-0.7.0.beta6.gem \
+        rubymine_gems/debase-0.2.3.beta2.gem
 
 ENTRYPOINT /usr/sbin/sshd -D -e
