@@ -28,11 +28,25 @@ module HtmlReader
 
     def fetch(document)
       items = []
-      fetch_block_document(document, get_instructions[:block]).each { |block_document|
-        fetch_data(block_document, get_instructions[:entity]).each { |element|
+      if get_instructions[:block].nil?
+        # "block" instructions is not defined
+        if document.instance_of?(Nokogiri::HTML::Document)
+          block_document = fetch_block_document(document, {:type => :selector, :selector => 'body'}).first
+        else
+          block_document = document
+        end
+
+        fetch_data(block_document, get_instructions[:entity]).each do |element|
           items.push element
+        end
+      else
+        # fetch each "block" and process entities
+        fetch_block_document(document, get_instructions[:block]).each {|block_document|
+          fetch_data(block_document, get_instructions[:entity]).each {|element|
+            items.push element
+          }
         }
-      }
+      end
       items
     end
 
@@ -72,7 +86,10 @@ module HtmlReader
     # @return [Nokogiri::XML::NodeSet]
 
     def fetch_block_document(document, instructions)
+      raise 'Instructions are not set.' if instructions.nil?
+
       return call_function(document, instructions) if instructions[:type] == :function
+
       Page::fetch_nodes(document, instructions)
     end
 
