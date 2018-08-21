@@ -62,6 +62,8 @@ module HtmlReader
       # @return [self]
 
       def set_instructions(instructions)
+        instructions = [instructions] unless instructions.instance_of? Array
+
         @instructions = instructions
         self
       end
