@@ -138,11 +138,11 @@ module HtmlReader
 
     # Test fetching nodes ul-li
     def test_fetch_ul_li
-      # TODO fix the instuctions or bugs
-      raise 'not implemented yet.'
+      # TODO fix the instructions or bugs
+      # raise 'not implemented yet.'
 
       obj  = PageFetcher.new
-      html = Nokogiri::HTML(get_content)
+      html = Nokogiri::HTML(get_content(file: 'page_fetcher_ul_li.html'))
 
       obj.set_instructions(
           {
@@ -183,53 +183,23 @@ module HtmlReader
               :url       => '',
           },
           {
-              :label     => 'Country',
+              :label     => 'Genre',
               :url       => '',
               :_children => [
                   {
-                      :label => 'United States',
-                      :url   => '/country/united-states',
+                      :label => 'Action movies',
+                      :url   => '/country/action',
                   },
                   {
-                      :label => 'United Kingdom',
-                      :url   => '/country/united-kingdom',
+                      :label => 'Adventure movies',
+                      :url   => '/country/adventure'
                   },
+                  {
+                      :label => 'Animation movies',
+                      :url   => '/country/animation'
+                  }
               ]
-          },
-          {
-              :label     => 'Movies',
-              :url       => '/movies',
-          },
-          {
-              :label     => 'TV-Series',
-              :url       => '/tv-series',
-          },
-          {
-              :label     => 'A-Z List',
-              :url       => '/az-list',
-          },
-          {
-              :label     => 'Release',
-              :url       => '',
-              :_children => [
-                  {
-                      :label => '2018',
-                      :url   => '/release-2018',
-                  },
-                  {
-                      :label => '2017',
-                      :url   => '/release-2017',
-                  },
-              ]
-          },
-          {
-              :label     => 'Most Watched',
-              :url       => '/most-watched',
-          },
-          {
-              :label     => 'Request',
-              :url       => '#pop-request',
-          },
+          }
       ]
       # endregion
 
@@ -256,10 +226,10 @@ module HtmlReader
     #
     # @return [String]
 
-    def get_content
+    def get_content(file: 'page_fetcher.html')
       return @content if nil != @content
 
-      @content = File.open(__dir__ + '/_fixture/page_fetcher.html').read
+      @content = File.open(__dir__ + '/_fixture/'+file).read
     end
   end
 end
