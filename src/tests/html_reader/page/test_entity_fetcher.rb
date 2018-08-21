@@ -9,7 +9,7 @@ module HtmlReader
       # Test get/set instructions
       def test_set_instructions
         obj   = EntityFetcher.new
-        value = {:aa => 'aa'}
+        value = [{:aa => 'aa'}]
         assert_instance_of(EntityFetcher, obj.set_instructions(value))
         assert_equal(value, obj.get_instructions)
       end
