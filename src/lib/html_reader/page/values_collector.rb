@@ -116,7 +116,7 @@ module HtmlReader
         return value.text if filter_name == :no_strip
 
         # return text with tags
-        return value.to_s if filter_name == :node_text
+        return value.to_s.strip if filter_name == :node_text
 
         # return text without tags
         value.text.strip
