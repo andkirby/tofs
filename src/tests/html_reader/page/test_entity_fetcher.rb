@@ -25,7 +25,7 @@ module HtmlReader
               :data     => {:name1 => {:type => :value}}
             }
           ])
-        assert_equal ({:name1 => 'Link label 1'}), obj.fetch(html)
+        assert_equal ({:name1 => 'Link label 1'}), obj.fetch(document: html)
       end
 
       # Test fetching label text
@@ -39,7 +39,7 @@ module HtmlReader
               :data     => {:name1 => {}} # {:type => :value} is omitted
             }
           ])
-        assert_equal ({:name1 => 'Link label 1'}), obj.fetch(html)
+        assert_equal ({:name1 => 'Link label 1'}), obj.fetch(document: html)
       end
 
       # Test fetching non-stripped value
@@ -55,7 +55,7 @@ module HtmlReader
           ])
         assert_equal(
           "\n        \n          Link label 1\n        \n    ",
-          obj.fetch(html)[:name1])
+          obj.fetch(document: html)[:name1])
       end
 
       # Test fetching Nokogiri::XML::Element instead text
@@ -67,7 +67,7 @@ module HtmlReader
              :data     => {:name1 => {:filter => :element}},
              :selector => '.test-block a.deep-in',
            }])
-        assert_instance_of Nokogiri::XML::Element, obj.fetch(html)[:name1]
+        assert_instance_of Nokogiri::XML::Element, obj.fetch(document: html)[:name1]
       end
 
       # Test fetching html text of found node
@@ -86,7 +86,7 @@ module HtmlReader
         </span>
     </a>
         html
-        assert_equal expected.strip, obj.fetch(html)[:name1].strip
+        assert_equal expected.strip, obj.fetch(document: html)[:name1].strip
       end
 
       # Test fetching attribute
@@ -104,7 +104,7 @@ module HtmlReader
              },
              :selector => '.test-block a.deep-in',
            }])
-        assert_equal '/test/path/main', obj.fetch(html)[:url]
+        assert_equal '/test/path/main', obj.fetch(document: html)[:url]
       end
 
       # Test fetching attribute
@@ -123,8 +123,8 @@ module HtmlReader
              },
              :selector => '.test-block a.deep-in',
            }])
-        assert_equal '/test/path/main', obj.fetch(html)[:url]
-        assert_equal 'Link label 1', obj.fetch(html)[:name1]
+        assert_equal '/test/path/main', obj.fetch(document: html)[:url]
+        assert_equal 'Link label 1', obj.fetch(document: html)[:name1]
       end
 
       # Test fetching value of duplicated node
@@ -136,7 +136,7 @@ module HtmlReader
              :data     => {:name1 => {}},
              :selector => '.double-block a.duplicate',
            }])
-        assert_equal 'Link label 22 first', obj.fetch(html)[:name1]
+        assert_equal 'Link label 22 first', obj.fetch(document: html)[:name1]
       end
 
       # Test two nodes (plenty node)
@@ -159,7 +159,7 @@ module HtmlReader
         expected = [
           {:name1 => 'Link label 22 first', :link => '/test/path'},
           {:name1 => 'Link label 22 second', :link => '/test/another-path'}]
-        assert_equal expected, obj.fetch(html, true)
+        assert_equal expected, obj.fetch(document: html, plenty: true)
       end
 
       # Test two nodes with two different selectors (plenty node)
@@ -188,7 +188,7 @@ module HtmlReader
         expected = [
           {:title1 => 'Title 1', :link => '/some/1', :label1 => 'Label-1'},
           {:title1 => 'Title 2', :link => '/some/2', :label1 => 'Label-2'}]
-        assert_equal expected, obj.fetch(html, true)
+        assert_equal expected, obj.fetch(document: html, plenty: true)
       end
 
       # Test fetching value from with function
@@ -220,7 +220,7 @@ module HtmlReader
               },
             }
           ])
-        data = obj.fetch(html)
+        data = obj.fetch(document: html)
         assert_equal '10', data[:up]
         assert_equal '3', data[:down]
         assert_equal 7, data[:diff]
