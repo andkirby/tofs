@@ -19,8 +19,11 @@ module Service::PutLocker::Cli::Command
 
         # Serial info
         serial = get_api::get_info url
+
+        raise "Cannot fetch data by URL: #{url}." if serial.nil?
+
         get_output.simple 'Title:         '.yellow + serial[:label].green
-        get_output.simple 'URL:           '.yellow + serial[:url]
+        get_output.simple 'URL:           '.yellow + url
 
         # Last episode info
         # fetch the latest online episode
