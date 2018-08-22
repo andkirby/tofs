@@ -7,7 +7,7 @@ module Service::PutLocker::Cli::Command
     # Execute command
     #
     def execute(args, options)
-      if args
+      if args.count > 0
         get_api::add_urls args
       else
         get_api::get_urls.each { |url| get_output.simple url }

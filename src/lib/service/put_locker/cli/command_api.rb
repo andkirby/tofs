@@ -17,7 +17,7 @@ module Service
 
         def add_urls(urls)
           raise ArgumentError, 'Non-Array argument.' unless urls.instance_of? Array
-          raise CommandError, 'Empty urls list.' if urls.empty?
+          raise CommandError, 'Nothing to add. URLs list is empty.' if urls.empty?
 
           urls.each { |url| get_watcher::add_to_watch url }
           self

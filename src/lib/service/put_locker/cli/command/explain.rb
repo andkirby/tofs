@@ -13,6 +13,8 @@ module Service::PutLocker::Cli::Command
     def execute(args, options)
       urls = args.empty? ? get_api::get_urls : args
 
+      raise 'Empty URLs list.' if urls.count == 0
+
       urls.each do |url|
 
         # Serial info
