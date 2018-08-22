@@ -16,18 +16,21 @@ module Service
 
           @use_cache = false
 
-          def fetch(use_cache: @use_cache)
+          def fetch(uri:, use_cache: @use_cache)
             if use_cache
               items = get_cacher.get 'item', get_cache_default_namespace
               return items if nil != items
             end
 
             # fetch
-            html = Service::Document::fetch Service::Bmovies::get_base_url + '/film/alpha.5kx30/r1x84o', use_cache: use_cache
+            html = Service::Document::fetch(
+                Service::Bmovies::get_base_url.delete_suffix('/') +
+                    '/' + uri.delete_prefix('/'),
+                use_cache: use_cache)
 
             fetcher              = HtmlReader::PageFetcher.new
             fetcher.instructions = self::menu_instructions
-            items                 = fetcher.fetch(html).first
+            items                = fetcher.fetch(html).first
 
             get_cacher.put 'items', items, get_cache_default_namespace
 
@@ -44,20 +47,20 @@ module Service
                 :entity => [
                     {
                         :selector => 'h1',
-                        :data => {
+                        :data     => {
                             :label => {},
                         }
                     },
                     {
                         :selector => ".row .meta dt:contains('Quality:') ~ dd:first span",
-                        :data => {
+                        :data     => {
                             :quality => {},
                         }
                     },
                     {
                         :selector => '.thumb img',
-                        :data => {
-                            :thumbnail   => {
+                        :data     => {
+                            :thumbnail => {
                                 :type      => :attribute,
                                 :attribute => 'src',
                             },
@@ -65,20 +68,20 @@ module Service
                     },
                     {
                         :selector => '.meta span:has(span.imdb) b',
-                        :data => {
-                            :imdb   => {},
+                        :data     => {
+                            :imdb => {},
                         }
                     },
                     {
-                        :selector => ".row .meta dt:contains('Genre:') ~ dd:first",
+                        :selector    => ".row .meta dt:contains('Genre:') ~ dd:first",
                         :gather_data => true,
-                        :data => {
+                        :data        => {
                             :genre => {
-                                :type      => :children,
+                                :type         => :children,
                                 :instructions => {
                                     :selector => 'a',
-                                    :data => {
-                                        :label   => {},
+                                    :data     => {
+                                        :label => {},
                                         :url   => {
                                             :type      => :attribute,
                                             :attribute => 'href',
@@ -89,15 +92,15 @@ module Service
                         }
                     },
                     {
-                        :selector => ".row .meta dt:contains('Stars:') ~ dd:first",
+                        :selector    => ".row .meta dt:contains('Stars:') ~ dd:first",
                         :gather_data => true,
-                        :data => {
+                        :data        => {
                             :stars => {
-                                :type      => :children,
+                                :type         => :children,
                                 :instructions => {
                                     :selector => 'a',
-                                    :data => {
-                                        :label   => {},
+                                    :data     => {
+                                        :label => {},
                                         :url   => {
                                             :type      => :attribute,
                                             :attribute => 'href',
@@ -109,20 +112,20 @@ module Service
                     },
                     {
                         :selector => ".row .meta dt:contains('Director:') ~ dd:first",
-                        :data => {
+                        :data     => {
                             :director => {},
                         }
                     },
                     {
-                        :selector => ".row .meta dt:contains('Country:') ~ dd:first",
+                        :selector    => ".row .meta dt:contains('Country:') ~ dd:first",
                         :gather_data => true,
-                        :data => {
+                        :data        => {
                             :country => {
-                                :type      => :children,
+                                :type         => :children,
                                 :instructions => {
                                     :selector => 'a',
-                                    :data => {
-                                        :label   => {},
+                                    :data     => {
+                                        :label => {},
                                         :url   => {
                                             :type      => :attribute,
                                             :attribute => 'href',
@@ -134,19 +137,19 @@ module Service
                     },
                     {
                         :selector => ".row .meta dt:contains('Rating:') ~ dd:first > span:first",
-                        :data => {
+                        :data     => {
                             :rating => {},
                         }
                     },
                     {
                         :selector => ".row .meta dt:contains('Release:') ~ dd:first",
-                        :data => {
+                        :data     => {
                             :release => {},
                         }
                     },
                     {
                         :selector => '.desc',
-                        :data => {
+                        :data     => {
                             :description => {},
                         }
                     },
