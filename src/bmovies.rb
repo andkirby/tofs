@@ -1,13 +1,12 @@
 require 'pp'
 require 'highline/import'
 require 'colorize'
-require 'terminal-table'
-require 'word_wrap'
 
 require_relative 'lib/service/bmovies/api/category/menu'
 require_relative 'lib/service/bmovies/api/item/slider'
 require_relative 'lib/service/bmovies/api/item/movie'
 require_relative 'lib/shell/output'
+require_relative 'lib/service/cli/show_entity'
 
 module Bmovies
   module_function
@@ -72,23 +71,8 @@ module Bmovies
 
   ##
   # Show entity data
-  def show_entity(entity, name: nil, max_value_with: 100, max_width: 120)
-    rows = []
-    entity.each do |key, value|
-      if value.kind_of? Hash
-        value = value[:label]
-      end
-      if value.kind_of? Array and value.first.kind_of? Hash and !value.first[:label].nil?
-        value = value.collect{|h| h[:label]}.join(", ").to_s
-      end
-      # words wrap, max 80 symbols
-      value = WordWrap.ww value, max_value_with
-      rows.push [key, value]
-    end
-
-    table = Terminal::Table.new :title => name, :rows => rows, style: {:padding_left => 2, :width => max_width}
-
-    puts table
+  def show_entity(*args)
+    Service::Cli::ShowEntity::show_entity *args
   end
 
   ##
