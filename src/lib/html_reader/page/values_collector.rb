@@ -53,7 +53,7 @@ module HtmlReader
         elsif nil == node && instruction[:type]
           value = nil
         else
-          raise HtmlReader::Error.new 'Unknown instruction type.'
+          raise HtmlReader::Error.new 'Unknown instruction type or XML/HTML node not found.'
         end
 
         value = filter_node(value, instruction)
