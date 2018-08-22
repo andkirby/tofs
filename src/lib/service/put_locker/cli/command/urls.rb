@@ -7,7 +7,11 @@ module Service::PutLocker::Cli::Command
     # Execute command
     #
     def execute(args, options)
-      get_api::get_urls.each { |url| get_output.simple url }
+      if args
+        get_api::add_urls args
+      else
+        get_api::get_urls.each { |url| get_output.simple url }
+      end
     end
 
     ##
@@ -16,9 +20,9 @@ module Service::PutLocker::Cli::Command
     # @param [Commander::Command] command
     #
     def init_command(command)
-      command.syntax      = 'putlocker urls'
-      command.summary     = ''
-      command.description = 'Show URLs watch list.'
+      command.syntax      = 'putlocker urls [URL1, URL2, .. URLn]'
+      command.summary     = 'Add/show watch URLs list.'
+      command.description = 'Show URLs watch list. New URLs will be added if passed as arguments.'
     end
   end
 end
