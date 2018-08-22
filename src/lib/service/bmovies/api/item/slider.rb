@@ -11,25 +11,24 @@ require 'pp'
 module Service
   module Bmovies
     module Api
-      module Category
-        class Menu
+      module Item
+        class Slider
           include Service::Bmovies::Api::Cached
-          include MenuLinear
 
           @use_cache = true
 
           def fetch(use_cache: @use_cache)
             if use_cache
-              menu = get_cacher.get 'menu', 'menu'
+              menu = get_cacher.get 'item', 'slider'
               return menu if nil != menu
             end
 
             # fetch
             html = Service::Document::fetch Service::Bmovies::get_base_url, true
 
-            fetcher = HtmlReader::PageFetcher.new
+            fetcher              = HtmlReader::PageFetcher.new
             fetcher.instructions = self::menu_instructions
-            menu = fetcher.fetch(html)
+            menu                 = fetcher.fetch(html)
 
             get_cacher.put 'menu', menu, 'menu'
 
@@ -39,28 +38,34 @@ module Service
           def menu_instructions
             {
                 # block where entities can be found
-                :block        => {
+                :block  => {
                     :type     => :selector,
-                    :selector => "#menu/li:has(ul)",
+                    :selector => '.slider.swiper-container div.container > div.inner',
                 },
                 :entity => [
                     {
-                        :xpath => 'a',
-                        :data  => {
-                            :label => {},
-                            :url   => {
-                                :type      => :attribute,
-                                :attribute => 'href',
-                            },
+                        :data => {
+                            :title => {
+                                :instructions => {
+                                    :xpath => 'a.name',
+                                    :data  => {
+                                        :label => {},
+                                        :url   => {
+                                            :type      => :attribute,
+                                            :attribute => 'href',
+                                        },
+                                    }
+                                }
+                            }
                         }
                     },
                     # instruction for child nodes
                     {
-                        :xpath => 'a/following-sibling::ul/li',
+                        :xpath       => 'a/following-sibling::ul/li',
                         :gather_data => true,
-                        :data => {
+                        :data        => {
                             :_children => {
-                                :type      => :children,
+                                :type         => :children,
                                 :instructions => :the_same
                             },
                         },

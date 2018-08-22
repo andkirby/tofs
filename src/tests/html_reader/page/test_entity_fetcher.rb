@@ -103,7 +103,7 @@ module HtmlReader
         assert_equal '/test/path/main', obj.fetch(document: html)[:url]
       end
 
-      # Test fetching attribute
+      # Test fetching two data elements
       def test_fetch_two_data_elements
         html             = Nokogiri::HTML(content)
         obj              = EntityFetcher.new
@@ -120,6 +120,43 @@ module HtmlReader
                             }]
         assert_equal '/test/path/main', obj.fetch(document: html)[:url]
         assert_equal 'Link label 1', obj.fetch(document: html)[:name1]
+      end
+
+      # Test fetching two data elements
+      def test_fetch_two_nodes_data
+        html             = Nokogiri::HTML(<<-HTML
+<div id="two_nodes_data">
+    <ul>
+        <li class="two_nodes_data_foo">foo one</li>
+        <li class="two_nodes_data_bar" bar="bar two">
+            <!--empty-->
+        </li>
+    </ul>
+</div>
+        HTML
+        )
+        obj              = EntityFetcher.new
+        obj.instructions = [
+            {
+                :selector => '#two_nodes_data .two_nodes_data_foo',
+                :data     => {
+                    :foo => {},
+                },
+            },
+            {
+                :selector => '#two_nodes_data .two_nodes_data_bar',
+                :data     =>
+                    {
+                    :bar => {
+                        :type         => :attribute,
+                        :attribute    => 'bar',
+                    },
+                },
+            },
+        ]
+
+        assert_equal 'foo one', obj.fetch(document: html)[:foo]
+        assert_equal 'bar two', obj.fetch(document: html)[:bar]
       end
 
       # Test fetching value of duplicated node
