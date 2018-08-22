@@ -29,4 +29,10 @@ gem 'sinatra'
 # CLI tool
 gem 'commander'
 
+# https://github.com/tj/terminal-table
+gem 'terminal-table'
+
+# http://radek.io/2014/01/25/word-wrap-in-ruby/
+gem 'word_wrap'
+
 # gem 'autoloader', '~> 0.0.2'
