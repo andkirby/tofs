@@ -95,6 +95,7 @@ module Service
                     # instruction for child nodes
                     {
                         :xpath => 'a/following-sibling::ul/li',
+                        :gather_data => true,
                         :data => {
                             :_children => {
                                 :type      => :children,
