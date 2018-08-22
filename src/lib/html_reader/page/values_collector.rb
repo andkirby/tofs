@@ -56,7 +56,17 @@ module HtmlReader
           raise HtmlReader::Error.new 'Unknown instruction type.'
         end
 
-        @data[name] = filter_node(value, instruction)
+        value = filter_node(value, instruction)
+        if @data[name].instance_of? Array and value.instance_of? Array
+          @data[name] = [@data[name], value].flatten
+        else
+          unless @data[name].nil? and true != instruction[:overwrite]
+            raise "Value already set for data key name '#{name}'."
+          end
+          @data[name] = value
+        end
+
+        @data[name]
       end
 
       ##
