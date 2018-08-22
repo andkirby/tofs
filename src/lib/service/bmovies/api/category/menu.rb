@@ -25,7 +25,7 @@ module Service
             end
 
             # fetch
-            html = Service::Document::fetch Service::Bmovies::get_base_url, true
+            html = Service::Document::fetch Service::Bmovies::get_base_url, use_cache: use_cache
 
             fetcher = HtmlReader::PageFetcher.new
             fetcher.instructions = self::menu_instructions

@@ -5,7 +5,7 @@ require_relative 'cacher'
 module Service
   module Api
     module Request
-      def request(url, use_cache = true, namespace = nil, timeout = 3600)
+      def request(url, use_cache: true, namespace: nil, timeout: 3600)
         use_cache = false if timeout == 0
 
         if use_cache
