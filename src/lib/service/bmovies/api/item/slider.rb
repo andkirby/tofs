@@ -4,7 +4,6 @@ require_relative '../../../api/request'
 require_relative '../../../document'
 require_relative '../../../bmovies'
 require_relative '../../../bmovies/api/cached'
-require_relative 'menu_linear'
 require 'uri'
 require 'pp'
 
@@ -15,12 +14,12 @@ module Service
         class Slider
           include Service::Bmovies::Api::Cached
 
-          @use_cache = true
+          @use_cache = false
 
           def fetch(use_cache: @use_cache)
             if use_cache
-              menu = get_cacher.get 'item', 'slider'
-              return menu if nil != menu
+              items = get_cacher.get 'item', get_cache_default_namespace
+              return items if nil != items
             end
 
             # fetch
@@ -28,11 +27,11 @@ module Service
 
             fetcher              = HtmlReader::PageFetcher.new
             fetcher.instructions = self::menu_instructions
-            menu                 = fetcher.fetch(html)
+            items                 = fetcher.fetch(html)
 
-            get_cacher.put 'menu', menu, 'menu'
+            get_cacher.put 'items', items, get_cache_default_namespace
 
-            menu
+            items
           end
 
           def menu_instructions
@@ -44,38 +43,58 @@ module Service
                 },
                 :entity => [
                     {
+                        :selector => 'a.name',
                         :data => {
-                            :title => {
+                            :label => {},
+                            :url   => {
+                                :type      => :attribute,
+                                :attribute => 'href',
+                            },
+                        }
+                    },
+                    {
+                        :selector => '.meta .imdb > b',
+                        :data => {
+                            :imdb => {},
+                        }
+                    },
+                    {
+                        :selector => '.meta .quality',
+                        :data => {
+                            :quality => {},
+                        }
+                    },
+                    {
+                        :selector => '.meta .category',
+                        :gather_data => true,
+                        :data => {
+                            :category => {
+                                :type      => :children,
                                 :instructions => {
-                                    :xpath => 'a.name',
-                                    :data  => {
-                                        :label => {},
+                                    :selector => 'a',
+                                    :data => {
+                                        :label   => {},
                                         :url   => {
                                             :type      => :attribute,
                                             :attribute => 'href',
                                         },
                                     }
                                 }
-                            }
+                            },
                         }
                     },
-                    # instruction for child nodes
                     {
-                        :xpath       => 'a/following-sibling::ul/li',
-                        :gather_data => true,
-                        :data        => {
-                            :_children => {
-                                :type         => :children,
-                                :instructions => :the_same
-                            },
-                        },
-                    }
+                        :selector => '.desc',
+                        :data => {
+                            :description => {},
+                        }
+                    },
                 ],
             }
           end
 
           def get_cache_default_namespace
-            'menu'
+            'slider'
           end
         end
       end
