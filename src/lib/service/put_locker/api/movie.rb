@@ -27,16 +27,30 @@ module Service
           # TODO add fetching genres
           fetcher.instructions = {
               :block  => {
-                  :selector => 'div.content-box td.summary > table.table2'
+                  :selector => 'div.topdescription'
               },
               :entity => [
                   {
-                      :selector => 'h2 a',
+                      :selector => '.topdescriptiondesc h2',
                       :data     => {
                           :label => {},
-                          :url   => {:type => :attribute, :attribute => 'href'},
                       }
-                  }
+                  },
+                  {
+                      :selector => '.topdescriptionthumb img',
+                      :data     => {
+                          :thumbnail => {
+                              type: :attribute,
+                              attribute: 'src',
+                          },
+                      }
+                  },
+                  {
+                      :selector => '.topdescriptiondesc p',
+                      :data     => {
+                          :description => {},
+                      }
+                  },
               ]
           }
 
