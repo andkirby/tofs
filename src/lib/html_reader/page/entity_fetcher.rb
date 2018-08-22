@@ -110,7 +110,7 @@ module HtmlReader
           end
         }
 
-        collector.get_data
+        collector.data
       end
 
       ##
@@ -134,6 +134,7 @@ module HtmlReader
       # @return [Hash]
 
       def fetch_plenty(document)
+        # @type [HtmlReader::Page::ValuesCollector[]] collectors
         collectors = {}
         unless get_instructions.instance_of? Array
           raise 'Instructions must be an array.'
@@ -163,7 +164,7 @@ module HtmlReader
 
         collectors.each do |i, collector|
           # @type [HtmlReader::Page::ValuesCollector] collector
-          data.push collector.get_data
+          data.push collector.data
         end
 
         data

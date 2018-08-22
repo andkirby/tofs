@@ -46,7 +46,7 @@ module HtmlReader
         elsif instruction[:type] == :function
           value = call_function(name, instruction)
         elsif instruction[:type] == :children
-          value = get_children(name, instruction, node)
+          value = children(name, instruction, node)
         elsif node && (instruction[:type] == :value || nil == instruction[:type])
           # empty type should be determined as :value
           value = node
@@ -74,7 +74,7 @@ module HtmlReader
       #
       # @return [Hash]
 
-      def get_data
+      def data
         @data
       end
 
@@ -88,7 +88,7 @@ module HtmlReader
       # @param [Nokogiri::XML::Element] node
       # @return [self]
 
-      def get_children(name, instruction, node)
+      def children(name, instruction, node)
         instruction = instruction[:instructions] == :the_same ?
           @options[:instructions] : instruction[:instructions]
 
