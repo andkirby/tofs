@@ -1,5 +1,6 @@
 require_relative '../command'
 require_relative 'command_abstract'
+require_relative '../../../cli/show_entity'
 
 module Service::PutLocker::Cli::Command
   class Explain < CommandAbstract
@@ -22,23 +23,28 @@ module Service::PutLocker::Cli::Command
 
         raise "Cannot fetch data by URL: #{url}." if serial.nil?
 
-        get_output.simple 'Title:         '.yellow + serial[:label].green
-        get_output.simple 'URL:           '.yellow + url
+        serial[:label] = serial[:label].green
+        serial[:url] = url if serial[:url].nil?
 
         # Last episode info
         # fetch the latest online episode
         the_latest_episode = options.online ? get_api::fetch_last_episode(url) : false
         last_episode = the_latest_episode || get_api::get_last_episode(url)
         if last_episode
-          label = the_latest_episode ? 'Last episode (UPD):'.red : 'Last episode:  '.yellow
-
-          get_output.simple label +
-                              'Season ' + last_episode[:season_index].to_s +
+          serial['last episode'] = 'Season ' + last_episode[:season_index].to_s +
                               ' Episode ' + last_episode[:index].to_s
         else
-          get_output.simple 'Last episode:  '.yellow + 'No'.light_red
+          serial['last episode'] = 'No'.light_red
         end
+
+        show_entity serial
       end
+    end
+
+    ##
+    # Show entity data
+    def show_entity(*args)
+      Service::Cli::ShowEntity::show_entity *args
     end
 
     ##
