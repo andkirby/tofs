@@ -3,103 +3,173 @@ require 'mocha/test_unit'
 require 'nokogiri'
 require 'pp'
 require_relative '../../../lib/html_reader/page_fetcher'
+require_relative '../../content_fixture'
 
-PageFetcher = HtmlReader::PageFetcher
 
-module HtmlReader::TestPageFetcher
-    class TestChildren < Test::Unit::TestCase
-      def test_two_children
-        obj  = PageFetcher.new
-        html = Nokogiri::HTML(<<-HTML
-  <ul>
-    <li>
-      <a href="/plenty">Plenty</a>
-      <ul>
-        <li>
-          <a href="/plenty/one">Plenty One</a>
-        </li>
-        <li>
-          <a href="/plenty/two">Plenty Two</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a href="/home">Home</a>
-    </li>
-  </ul>
-  HTML
-  )
-        obj.set_instructions(
-            {
-                # block where entities can be found
-                :block        => {
-                    :type     => :selector,
-                    :selector => 'ul/li',
-                },
-                :entity => [
-                    # data element instructions
-                    {
-                        :xpath => 'a',
-                        :data => {
-                            :label => {},
-                            :url => {
-                                :type => :attribute,
-                                :attribute => 'href',
-                            }
-                        }
-                    },
-                    # children instructions
-                    # each found element will be process by data element instructions
-                    # because :instructions => :the_same
-                    {
-                        :xpath => 'a/following-sibling::ul/li',
-                        :gather_data => true,
-                        :data => {
-                            :_children => {
-                                :type => :children,
-                                :instructions => :the_same,
-                            },
-                        },
-                    }
-                ],
-            }
-        )
-        # region expected
-        expected = [
-            {
-                :label     => 'Home',
-                :url       => '/home',
-            },
-            {
-                :label     => 'Plenty',
-                :url       => '/plenty',
-                :_children => [
-                    {
-                        :label => 'Plenty One',
-                        :url   => '/plenty/one',
-                    },
-                    {
-                        :label => 'Plenty Two',
-                        :url   => '/plenty/two'
-                    },
-                ]
-            }
-        ]
-        # endregion
-        assert_equal(expected, obj.fetch(html))
-      end
+module HtmlReader
+  class TestPageFetcher_TestChildren < Test::Unit::TestCase
 
-      protected
+    include ContentFixture
 
-      ##
-      # Get HTML content
-      #
-      # @return [String]
+    def test_one_level
+      obj  = HtmlReader::PageFetcher.new
+      html = Nokogiri::HTML(
+          content(__method__.to_s, __FILE__)
+      )
 
-      def get_content(file: 'page_fetcher.html')
-        return @content if nil != @content
+      obj.set_instructions(
+          {
+              # block where entities can be found
+              :block  => {
+                  :type     => :selector,
+                  :selector => '#main/li',
+              },
+              :entity => [
+                  # data instructions of main element
+                  {
+                      :xpath => 'a',
+                      :data  => {
+                          :label => {},
+                          :url   => {
+                              :type      => :attribute,
+                              :attribute => 'href',
+                          }
+                      }
+                  },
+                  # children instructions
+                  # each found element will be processed by the same entity instructions
+                  # because :instructions => :the_same
+                  {
+                      :xpath => 'a/following-sibling::ul/li',
+                      # gather_data must be set because each <a> tag placed into a different document
+                      :gather_data => true,
+                      :data        => {
+                          :_children => {
+                              :type         => :children,
+                              :instructions => :the_same,
+                          },
+                      },
+                  }
+              ],
+          }
+      )
 
-        @content = File.open(__dir__ + '/_fixture/'+file).read
-      end
+      # region expected
+      expected = [
+          {
+              :label => 'Home',
+              :url   => '/home',
+          },
+          {
+              :label     => 'Plenty',
+              :url       => '/plenty',
+              :_children => [
+                  {
+                      :label => 'Plenty One',
+                      :url   => '/plenty/one',
+                  },
+                  {
+                      :label => 'Plenty Two',
+                      :url   => '/plenty/two'
+                  },
+              ]
+          }
+      ]
+      # endregion
+
+      assert_equal(expected, obj.fetch(html))
+    end
+
+    def test_multi_level
+      obj  = HtmlReader::PageFetcher.new
+      html = Nokogiri::HTML(
+          content(__method__.to_s, __FILE__)
+      )
+
+      obj.set_instructions(
+          {
+              # block where entities can be found
+              :block  => {
+                  :type     => :selector,
+                  :selector => '#main/li',
+              },
+              :entity => [
+                  # data instructions of main element
+                  {
+                      :xpath => 'a',
+                      :data  => {
+                          :label => {},
+                          :url   => {
+                              :type      => :attribute,
+                              :attribute => 'href',
+                          }
+                      }
+                  },
+                  # children instructions
+                  # each found element will be processed by the same entity instructions
+                  # because :instructions => :the_same
+                  {
+                      :xpath => 'a/following-sibling::ul/li',
+                      # gather_data must be set because each <a> tag placed into a different document
+                      :gather_data => true,
+                      :data        => {
+                          :_children => {
+                              :type         => :children,
+                              :instructions => :the_same,
+                          },
+                      },
+                  }
+              ],
+          }
+      )
+      # region expected
+      expected = [
+          {
+              :label     => 'one',
+              :url       => '/1',
+              :_children => [
+                  {
+                      :label => 'one/one',
+                      :url   => '/1/1',
+                  },
+                  {
+                      :label     => 'one/two',
+                      :url       => '/1/2',
+                      :_children => [
+                          {
+                              :label => 'one/two/one',
+                              :url   => '/1/2/1',
+                          },
+                          {
+                              :label => 'one/two/two',
+                              :url   => '/1/2/2',
+                          },
+                          {
+                              :label     => 'one/two/three',
+                              :url       => '/1/2/3',
+                              :_children => [
+                                  {
+                                      :label => 'one/two/three/one',
+                                      :url   => '/1/2/3/1',
+                                  },
+                                  {
+                                      :label => 'one/two/three/two',
+                                      :url   => '/1/2/3/2',
+                                  },
+                              ]
+                          },
+                      ]
+                  },
+                  {
+                      :label => 'one/three',
+                      :url   => '/1/3',
+                  },
+              ]
+          }
+      ]
+      # endregion
+
+      assert_equal(expected, obj.fetch(html))
+    end
   end
 end
