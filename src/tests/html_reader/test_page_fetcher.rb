@@ -17,7 +17,7 @@ module HtmlReader
     # Test fetching nodes on a page
     def test_fetch_nodes
       obj = PageFetcher.new
-      html = Nokogiri::HTML(get_content)
+      html = Nokogiri::HTML(content)
       obj.set_instructions(
           {
               :entity => [
@@ -50,7 +50,7 @@ module HtmlReader
     # Test fetching nodes on a page
     def test_fetch_child_nodes
       obj = PageFetcher.new
-      html = Nokogiri::HTML(get_content)
+      html = Nokogiri::HTML(content)
 
       obj.set_instructions(
           {
@@ -146,7 +146,7 @@ module HtmlReader
 
     def test_last_page
       obj = PageFetcher.new
-      html = Nokogiri::HTML(get_content)
+      html = Nokogiri::HTML(content)
       obj.set_instructions(
           {
               :last_page => {
@@ -163,7 +163,7 @@ module HtmlReader
     #
     # @return [String]
 
-    def get_content(file: 'page_fetcher.html')
+    def content(file: 'page_fetcher.html')
       return @content if nil != @content
 
       @content = File.open(__dir__ + '/_fixture/' + file).read

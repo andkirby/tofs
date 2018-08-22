@@ -16,7 +16,7 @@ module HtmlReader
 
       # Test fetching label text
       def test_fetch_text
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [
@@ -30,7 +30,7 @@ module HtmlReader
 
       # Test fetching label text
       def test_fetch_simple_instruction
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [
@@ -44,7 +44,7 @@ module HtmlReader
 
       # Test fetching non-stripped value
       def test_fetch_non_stripped_text
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [
@@ -60,7 +60,7 @@ module HtmlReader
 
       # Test fetching Nokogiri::XML::Element instead text
       def test_fetch_element
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [{
@@ -72,7 +72,7 @@ module HtmlReader
 
       # Test fetching html text of found node
       def test_fetch_node_text
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [{
@@ -91,7 +91,7 @@ module HtmlReader
 
       # Test fetching attribute
       def test_fetch_attribute
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [{
@@ -109,7 +109,7 @@ module HtmlReader
 
       # Test fetching attribute
       def test_fetch_two_data_elements
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [{
@@ -129,7 +129,7 @@ module HtmlReader
 
       # Test fetching value of duplicated node
       def test_fetch_node_first
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [{
@@ -141,7 +141,7 @@ module HtmlReader
 
       # Test two nodes (plenty node)
       def test_fetch_selector_nodes
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [
@@ -164,7 +164,7 @@ module HtmlReader
 
       # Test two nodes with two different selectors (plenty node)
       def test_fetch_nodes_two_selectors
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [
@@ -193,7 +193,7 @@ module HtmlReader
 
       # Test fetching value from with function
       def test_fetch_func_node
-        html = Nokogiri::HTML(get_content)
+        html = Nokogiri::HTML(content)
         obj  = EntityFetcher.new
         obj.set_instructions(
           [
@@ -233,7 +233,7 @@ module HtmlReader
       #
       # @return [String]
 
-      def get_content
+      def content
         return @content if nil != @content
 
         @content = File.open(__dir__ + '/../_fixture/entity_fetcher.html').read

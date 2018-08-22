@@ -9,7 +9,7 @@ module HtmlReader
 
     # Test fetching nodes on a page
     def test_following_sibling
-      document = Nokogiri::HTML(get_html)
+      document = Nokogiri::HTML(content)
 
       block = Page::fetch_node(document, {:css => '#block'})
       nodes = Page::fetch_nodes(block, {:xpath => 'a/following-sibling::ul/li'})
@@ -19,7 +19,7 @@ module HtmlReader
 
     protected
 
-    def get_html
+    def content
       <<-'HTML'
 <li id="block">
   <a>base</a>
