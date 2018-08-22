@@ -24,15 +24,15 @@ module Service
             # grab years
             menu  = Service::Bmovies::Api::Category::Menu.new.fetch
             years = fetch_by_menu(menu)
-            years = years.each { |i, group|
-              group.each { |node|
+            years = years.each {|i, group|
+              group.each {|node|
                 # convert 90 to 1990
                 node[:label] = '19' + node[:label] if node[:label].length == 2
                 # convert "30s and earlier"
                 node[:label] = '19' + node[:label] if node[:label] ==
-                  "\x33\x30\x2D\xD0\xB5\x20\xD0\xB8\x20\xD1\x80\xD0\xB0\xD0\xBD\xD0\xB5\xD0\xB5"
+                    "\x33\x30\x2D\xD0\xB5\x20\xD0\xB8\x20\xD1\x80\xD0\xB0\xD0\xBD\xD0\xB5\xD0\xB5"
               }
-              years[i] = group.sort_by! { |node| node[:label] }.reverse
+              years[i] = group.sort_by! {|node| node[:label]}.reverse
             }
             # write cache
             get_cacher.put('years', years, 'years')
@@ -42,12 +42,12 @@ module Service
 
           def fetch_by_menu(menu)
             years = {}
-            menu.each { |top_node|
+            menu.each {|top_node|
               unless top_node[:_children]
                 raise 'No children.'
               end
 
-              top_node[:_children].each { |node|
+              top_node[:_children].each {|node|
                 result = fetch_by_url(node[:url])
                 next if result == nil
                 years[node[:url]] = result
@@ -68,25 +68,23 @@ module Service
 
           def fetch_years(result)
             html = Service::Document::fetch(
-              Service::Bmovies::get_base_url + result[:url].sub('//' + Bmovies::HOSTNAME, '')
+                Service::Bmovies::get_base_url + result[:url].sub('//' + Bmovies::HOSTNAME, '')
             )
 
             return nil if html == nil
 
-            fetcher = HtmlReader::PageFetcher.new
-            fetcher.set_instructions(
-              {
+            fetcher              = HtmlReader::PageFetcher.new
+            fetcher.instructions = {
                 :block  => {:selector => '.main'},
                 :entity => [
-                  {
-                    :selector => 'a',
-                    :data     => {
-                      :url   => {:type => :attribute, :attribute => 'href'},
-                      :label => {},
-                    },
-                  }]
-              }
-            )
+                    {
+                        :selector => 'a',
+                        :data     => {
+                            :url   => {:type => :attribute, :attribute => 'href'},
+                            :label => {},
+                        },
+                    }]
+            }
             fetcher.fetch(html)
           end
 
@@ -94,21 +92,19 @@ module Service
 
           def fetch_url_to_years_page(url)
             html = Service::Document::fetch(
-              Service::Bmovies::get_base_url + url
+                Service::Bmovies::get_base_url + url
             )
             return nil if html == nil
 
             # Fetch genre URL
-            fetcher = HtmlReader::Page::EntityFetcher.new
-            fetcher.set_instructions(
-              [
+            fetcher              = HtmlReader::Page::EntityFetcher.new
+            fetcher.instructions = [
                 {
-                  :selector => "a:contains('" + YEAR_LABEL + "')",
-                  :data     => {
-                    :url => {:type => :attribute, :attribute => 'href'},
-                  },
+                    :selector => "a:contains('" + YEAR_LABEL + "')",
+                    :data     => {
+                        :url => {:type => :attribute, :attribute => 'href'},
+                    },
                 }]
-            )
 
             fetcher.fetch(document: html)
           end

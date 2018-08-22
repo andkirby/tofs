@@ -40,8 +40,8 @@ module Service
 
           def filter_by_strict(genres)
             if @strict
-              genres.each { |key, list|
-                list.delete_if{|i|
+              genres.each {|key, list|
+                list.delete_if {|i|
                   get_ignored_names.include?(i[:label])
                   # puts i[:label]
                 }
@@ -52,12 +52,12 @@ module Service
 
           def fetch_by_menu(menu)
             genres = {}
-            menu.each { |top_node|
+            menu.each {|top_node|
               unless top_node[:_children]
                 raise 'No children.'
               end
 
-              top_node[:_children].each { |node|
+              top_node[:_children].each {|node|
                 result = fetch_by_url(node[:url])
                 next if result == nil
                 genres[node[:url]] = result
@@ -78,25 +78,24 @@ module Service
 
           def fetch_genres(result)
             html = Service::Document::fetch(
-              Service::Bmovies::get_base_url + result[:url].sub('//' + Bmovies::HOSTNAME, '')
+                Service::Bmovies::get_base_url + result[:url].sub('//' + Bmovies::HOSTNAME, '')
             )
 
             return nil if html == nil
 
-            fetcher = HtmlReader::PageFetcher.new
-            fetcher.set_instructions(
-              {
+            fetcher              = HtmlReader::PageFetcher.new
+            fetcher.instructions = {
                 :block  => {:selector => '.main'},
                 :entity => [
-                  {
-                    :selector => 'a',
-                    :data     => {
-                      :url   => {:type => :attribute, :attribute => 'href'},
-                      :label => {},
-                    },
-                  }]
-              }
-            )
+                    {
+                        :selector => 'a',
+                        :data     => {
+                            :url   => {:type => :attribute, :attribute => 'href'},
+                            :label => {},
+                        },
+                    }]
+            }
+
             fetcher.fetch(html)
           end
 
@@ -104,21 +103,19 @@ module Service
 
           def fetch_url_to_genres_page(url)
             html = Service::Document::fetch(
-              Service::Bmovies::get_base_url + url
+                Service::Bmovies::get_base_url + url
             )
             return nil if html == nil
 
             # Fetch genre URL
-            fetcher = HtmlReader::Page::EntityFetcher.new
-            fetcher.set_instructions(
-              [
+            fetcher              = HtmlReader::Page::EntityFetcher.new
+            fetcher.instructions = [
                 {
-                  :selector => "a:contains('" + GENRE_LABEL + "')",
-                  :data     => {
-                    :url => {:type => :attribute, :attribute => 'href'},
-                  },
+                    :selector => "a:contains('" + GENRE_LABEL + "')",
+                    :data     => {
+                        :url => {:type => :attribute, :attribute => 'href'},
+                    },
                 }]
-            )
 
             fetcher.fetch(document: html)
           end
@@ -129,7 +126,7 @@ module Service
 
           def get_ignored_names
             [
-              "\xD0\xAD\xD1\x80\xD0\xBE\xD1\x82\xD0\xB8\xD0\xBA\xD0\xB0"
+                "\xD0\xAD\xD1\x80\xD0\xBE\xD1\x82\xD0\xB8\xD0\xBA\xD0\xB0"
             ]
           end
         end

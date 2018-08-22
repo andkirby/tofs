@@ -25,22 +25,21 @@ module Service
 
           fetcher = HtmlReader::PageFetcher.new
           # TODO add fetching genres
-          fetcher.set_instructions(
-            {
+          fetcher.instructions = {
               :block  => {
-                :selector => 'div.content-box td.summary > table.table2'
+                  :selector => 'div.content-box td.summary > table.table2'
               },
               :entity => [
-                {
-                  :selector => 'h2 a',
-                  :data     => {
-                    :label => {},
-                    :url   => {:type => :attribute, :attribute => 'href'},
+                  {
+                      :selector => 'h2 a',
+                      :data     => {
+                          :label => {},
+                          :url   => {:type => :attribute, :attribute => 'href'},
+                      }
                   }
-                }
               ]
-            }
-          )
+          }
+
           info = fetcher.fetch(get_document(url))
           return nil unless info
 
@@ -51,6 +50,7 @@ module Service
         end
 
         protected
+
         module_function
 
         def get_document(url)

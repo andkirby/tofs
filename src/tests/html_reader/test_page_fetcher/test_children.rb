@@ -17,42 +17,40 @@ module HtmlReader
           content(__method__.to_s, __FILE__)
       )
 
-      obj.set_instructions(
-          {
-              # block where entities can be found
-              :block  => {
-                  :type     => :selector,
-                  :selector => '#main/li',
-              },
-              :entity => [
-                  # data instructions of main element
-                  {
-                      :xpath => 'a',
-                      :data  => {
-                          :label => {},
-                          :url   => {
-                              :type      => :attribute,
-                              :attribute => 'href',
-                          }
+      obj.instructions = {
+          # block where entities can be found
+          :block  => {
+              :type     => :selector,
+              :selector => '#main/li',
+          },
+          :entity => [
+              # data instructions of main element
+              {
+                  :xpath => 'a',
+                  :data  => {
+                      :label => {},
+                      :url   => {
+                          :type      => :attribute,
+                          :attribute => 'href',
                       }
-                  },
-                  # children instructions
-                  # each found element will be processed by the same entity instructions
-                  # because :instructions => :the_same
-                  {
-                      :xpath => 'a/following-sibling::ul/li',
-                      # gather_data must be set because each <a> tag placed into a different document
-                      :gather_data => true,
-                      :data        => {
-                          :_children => {
-                              :type         => :children,
-                              :instructions => :the_same,
-                          },
-                      },
                   }
-              ],
-          }
-      )
+              },
+              # children instructions
+              # each found element will be processed by the same entity instructions
+              # because :instructions => :the_same
+              {
+                  :xpath => 'a/following-sibling::ul/li',
+                  # gather_data must be set because each <a> tag placed into a different document
+                  :gather_data => true,
+                  :data        => {
+                      :_children => {
+                          :type         => :children,
+                          :instructions => :the_same,
+                      },
+                  },
+              }
+          ],
+      }
 
       # region expected
       expected = [
@@ -86,42 +84,41 @@ module HtmlReader
           content(__method__.to_s, __FILE__)
       )
 
-      obj.set_instructions(
-          {
-              # block where entities can be found
-              :block  => {
-                  :type     => :selector,
-                  :selector => '#main/li',
-              },
-              :entity => [
-                  # data instructions of main element
-                  {
-                      :xpath => 'a',
-                      :data  => {
-                          :label => {},
-                          :url   => {
-                              :type      => :attribute,
-                              :attribute => 'href',
-                          }
+      obj.instructions = {
+          # block where entities can be found
+          :block  => {
+              :type     => :selector,
+              :selector => '#main/li',
+          },
+          :entity => [
+              # data instructions of main element
+              {
+                  :xpath => 'a',
+                  :data  => {
+                      :label => {},
+                      :url   => {
+                          :type      => :attribute,
+                          :attribute => 'href',
                       }
-                  },
-                  # children instructions
-                  # each found element will be processed by the same entity instructions
-                  # because :instructions => :the_same
-                  {
-                      :xpath => 'a/following-sibling::ul/li',
-                      # gather_data must be set because each <a> tag placed into a different document
-                      :gather_data => true,
-                      :data        => {
-                          :_children => {
-                              :type         => :children,
-                              :instructions => :the_same,
-                          },
-                      },
                   }
-              ],
-          }
-      )
+              },
+              # children instructions
+              # each found element will be processed by the same entity instructions
+              # because :instructions => :the_same
+              {
+                  :xpath => 'a/following-sibling::ul/li',
+                  # gather_data must be set because each <a> tag placed into a different document
+                  :gather_data => true,
+                  :data        => {
+                      :_children => {
+                          :type         => :children,
+                          :instructions => :the_same,
+                      },
+                  },
+              }
+          ],
+      }
+
       # region expected
       expected = [
           {

@@ -86,15 +86,15 @@ module HtmlReader
       # @param [Symbol] name
       # @param [Hash] instruction
       # @param [Nokogiri::XML::Element] node
-      # @return [self]
+      # @return [Hash, Array]
 
       def children(name, instruction, node)
         instruction = instruction[:instructions] == :the_same ?
           @options[:instructions] : instruction[:instructions]
 
-        Page::EntityFetcher.new.
-          set_instructions(instruction).
-          fetch(document: node, plenty: true)
+        fetcher = Page::EntityFetcher.new
+        fetcher.instructions = instruction
+        fetcher.fetch(document: node, plenty: true)
       end
 
       ##
@@ -115,18 +115,18 @@ module HtmlReader
       # Filter fetched node
       #
       # @param [Nokogiri::XML::Element] value
-      # @param [Symbol] filter_name
+      # @param [Symbol] filter
       # @return [String, Nokogiri::XML::Element]
 
-      def filter(value, filter_name = nil)
+      def filter(value, filter = nil)
         # return as is, :filter can be omitted in instruction
-        return value if filter_name == :element
+        return value if filter == :element
 
         # return non-stripped text
-        return value.text if filter_name == :no_strip
+        return value.text if filter == :no_strip
 
         # return text with tags
-        return value.to_s.strip if filter_name == :node_text
+        return value.to_s.strip if filter == :node_text
 
         # return text without tags
         value.text.strip

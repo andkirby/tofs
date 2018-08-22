@@ -14,17 +14,19 @@ module Service
         class Menu
           include Service::Bmovies::Api::Cached
 
-          def fetch
-            # menu = get_cacher.get 'menu', 'menu'
-            # return menu if nil != menu
+          @use_cache = true
 
+          def fetch(use_cache: @use_cache)
+            if use_cache
+              menu = get_cacher.get 'menu', 'menu'
+              return menu if nil != menu
+            end
 
             # fetch
-            html = Service::Document::fetch(
-                Service::Bmovies::get_base_url, true
-            )
+            html = Service::Document::fetch Service::Bmovies::get_base_url, true
+
             fetcher = HtmlReader::PageFetcher.new
-            fetcher.set_instructions self::get_menu_instructions
+            fetcher.instructions self::menu_instructions
             menu = fetcher.fetch(html)
 
             get_cacher.put 'menu', menu, 'menu'
@@ -32,14 +34,16 @@ module Service
             menu
           end
 
-          def fetch_linear(use_cache = true)
+          def fetch_linear(use_cache: @use_cache)
 
-            # if use_cache
-            #   menu = get_cacher.get 'menu-linear', 'menu' if use_cache
-            #   return menu if nil != menu
-            # end
+            if use_cache
+              menu = nil
+              menu = get_cacher.get 'menu-linear', 'menu' if use_cache
+              return menu unless menu.nil?
+            end
 
-            menu = get_linear_menu(fetch)
+            menu = to_linear(fetch)
+
             get_cacher.put 'menu-linear', menu, 'menu' if use_cache
 
             menu
@@ -47,7 +51,7 @@ module Service
 
           protected
 
-          def get_linear_menu(menu, parent_name = '', level = 0, count = 0)
+          def to_linear(menu, parent_name = '', level = 0, count = 0)
             result = {}
             menu.each {|item|
               if item.instance_of? Array
@@ -65,7 +69,7 @@ module Service
 
               if item[:_children]
                 result = result.merge(
-                    get_linear_menu(
+                    to_linear(
                         item[:_children], item[:label], level + 1, result.count
                     )
                 )
@@ -74,7 +78,7 @@ module Service
             result
           end
 
-          def get_menu_instructions
+          def menu_instructions
             {
                 # block where entities can be found
                 :block        => {

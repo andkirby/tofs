@@ -8,33 +8,32 @@ module HtmlReader
   class TestPageFetcher < Test::Unit::TestCase
     # Test get/set instructions
     def test_set_instructions
-      obj = PageFetcher.new
+      obj   = PageFetcher.new
       value = {:aa => 'aa'}
-      assert_instance_of(PageFetcher, obj.set_instructions(value))
+      obj.instructions = value
       assert_equal(value, obj.get_instructions)
     end
 
     # Test fetching nodes on a page
     def test_fetch_nodes
-      obj = PageFetcher.new
-      html = Nokogiri::HTML(content)
-      obj.set_instructions(
-          {
-              :entity => [
-                  {
-                      :type => :selector,
-                      :selector => '.blocks .nodes',
-                      # Instructions for entity which will be used in EntityFetcher
-                      :data => {
-                          :my_item => {
-                              :instructions => {:selector => 'span.item-text'},
-                          }
+      obj              = PageFetcher.new
+      html             = Nokogiri::HTML(content)
+      obj.instructions = {
+          :entity => [
+              {
+                  :type     => :selector,
+                  :selector => '.blocks .nodes',
+                  # Instructions for entity which will be used in EntityFetcher
+                  :data => {
+                      :my_item => {
+                          :instructions => {:selector => 'span.item-text'},
                       }
-
                   }
-              ],
-          }
-      )
+
+              }
+          ],
+      }
+
       # todo mock using EntityFetcher class
       expected = [
           {:my_item => 'a1'},
@@ -49,92 +48,91 @@ module HtmlReader
 
     # Test fetching nodes on a page
     def test_fetch_child_nodes
-      obj = PageFetcher.new
+      obj  = PageFetcher.new
       html = Nokogiri::HTML(content)
 
-      obj.set_instructions(
-          {
-              # block where entities can be found
-              :block => {
-                  :type => :selector,
-                  :selector => '.main-menu > div',
-              },
-              :entity => [
-                  {
-                      :xpath => 'a',
-                      :data => {
-                          :label => {},
-                          :url => {
-                              :type => :attribute,
-                              :attribute => 'href',
-                          }
+      obj.instructions = {
+          # block where entities can be found
+          :block  => {
+              :type     => :selector,
+              :selector => '.main-menu > div',
+          },
+          :entity => [
+              {
+                  :xpath => 'a',
+                  :data  => {
+                      :label => {},
+                      :url   => {
+                          :type      => :attribute,
+                          :attribute => 'href',
                       }
-                  },
-                  {
-                      :xpath => 'a/following-sibling::div',
-                      :data => {
-                          :_children => {
-                              :type => :children,
-                              :instructions => :the_same
-                          },
-                      },
                   }
-              ],
-          }
-      )
+              },
+              {
+                  :xpath => 'a/following-sibling::div',
+                  :data  => {
+                      :_children => {
+                          :type         => :children,
+                          :instructions => :the_same
+                      },
+                  },
+              }
+          ],
+      }
+
 
       # todo mock using EntityFetcher class
       # region expected
       expected = [
           {
-              :label => 'Video',
-              :url => '/video',
+              :label     => 'Video',
+              :url       => '/video',
               :_children => [
                   {
-                      :label => 'Movies',
-                      :url => '/video/movies',
+                      :label     => 'Movies',
+                      :url       => '/video/movies',
                       :_children => [
                           {
                               :label => 'Action',
-                              :url => '/video/movies/action',
+                              :url   => '/video/movies/action',
                           },
                           {
                               :label => 'Sci-Fi',
-                              :url => '/video/movies/sci-fi',
+                              :url   => '/video/movies/sci-fi',
                           },
                       ]
                   },
                   {
-                      :label => 'Series',
-                      :url => '/video/series',
+                      :label     => 'Series',
+                      :url       => '/video/series',
                       :_children => [
                           {
                               :label => 'Action',
-                              :url => '/video/series/action',
+                              :url   => '/video/series/action',
                           },
                           {
                               :label => 'Sci-Fi',
-                              :url => '/video/series/sci-fi',
+                              :url   => '/video/series/sci-fi',
                           },
                       ]
                   },
                   {
                       :label => 'Cartoons',
-                      :url => '/video/cartoons',
+                      :url   => '/video/cartoons',
                   },
               ]
           },
           {
-              :label => 'Books',
-              :url => '/books',
+              :label     => 'Books',
+              :url       => '/books',
               :_children => [
                   {
                       :label => 'Documentary',
-                      :url => '/books/doc',
+                      :url   => '/books/doc',
                   },
                   {
                       :label => 'Artistic',
-                      :url => '/books/artistic',
+                      :url   => '/books/artistic',
                   },
               ]
           },
@@ -145,14 +143,13 @@ module HtmlReader
     end
 
     def test_last_page
-      obj = PageFetcher.new
-      html = Nokogiri::HTML(content)
-      obj.set_instructions(
-          {
-              :last_page => {
-                  :selector => '.pager > span.active:last',
-              }
-          })
+      obj              = PageFetcher.new
+      html             = Nokogiri::HTML(content)
+      obj.instructions = {
+          :last_page => {
+              :selector => '.pager > span.active:last',
+          }
+      }
       assert_true(obj.last_page?(html))
     end
 

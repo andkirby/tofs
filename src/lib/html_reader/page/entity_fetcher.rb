@@ -61,7 +61,7 @@ module HtmlReader
       # @param [Array] instructions
       # @return [self]
 
-      def set_instructions(instructions)
+      def instructions=(instructions)
         instructions = [instructions] unless instructions.instance_of? Array
 
         @instructions = instructions
@@ -81,7 +81,7 @@ module HtmlReader
       #
       # @param [Nokogiri::HTML::Document, Nokogiri::XML::Element] document
       # @param [TrueClass, FalseClass] plenty Get plenty of elements or the only one
-      # @return [Hash]
+      # @return [Hash, Array]
 
       def fetch(document:, plenty: false)
         if plenty
@@ -100,11 +100,11 @@ module HtmlReader
       def fetch_single(document)
         collector = get_values_collector(document)
 
-        get_instructions.each { |instruction|
+        get_instructions.each {|instruction|
           node = Page::fetch_node(document, instruction)
 
           if instruction[:data]
-            instruction[:data].each { |name, data_instruction|
+            instruction[:data].each {|name, data_instruction|
               collector.fetch name, data_instruction, node
             }
           end
@@ -121,10 +121,10 @@ module HtmlReader
 
       def get_values_collector(document)
         Page::ValuesCollector.new(
-          {
-            :document     => document,
-            :instructions => get_instructions,
-          })
+            {
+                :document     => document,
+                :instructions => get_instructions,
+            })
       end
 
       ##
@@ -147,13 +147,18 @@ module HtmlReader
 
           nodes = Page::fetch_nodes(document, instruction)
 
-          nodes.each_with_index { |node, i|
+          nodes.each_with_index {|node, i|
+            if instruction[:gather_data]
+              # gather items under the same collector
+              i = 0
+            end
+
             unless collectors.key? i
               collectors[i] = get_values_collector(document)
             end
 
             if instruction[:data]
-              instruction[:data].each { |name, data_instruction|
+              instruction[:data].each {|name, data_instruction|
                 collectors[i].fetch name, data_instruction, node
               }
             end

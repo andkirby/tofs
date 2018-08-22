@@ -8,7 +8,7 @@ module HtmlReader
     # @param [Hash] instructions
     # @return [self]
 
-    def set_instructions(instructions)
+    def instructions=(instructions)
       @instructions = instructions
       self
     end
@@ -75,7 +75,7 @@ module HtmlReader
 
     def fetch_data(entity_document, instructions)
       fetcher = Page::EntityFetcher.new
-      fetcher.set_instructions instructions
+      fetcher.instructions = instructions
       fetcher.fetch(document: entity_document, plenty: true)
     end
 
