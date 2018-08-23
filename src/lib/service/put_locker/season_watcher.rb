@@ -95,7 +95,7 @@ module Service::PutLocker::SeasonWatcher
   # @return [Hash]
 
   def get_last_episode(url)
-    get_cacher.get 'last-episode-' + url
+    cacher.get 'last-episode-' + url
   end
 
   ##
@@ -118,7 +118,7 @@ module Service::PutLocker::SeasonWatcher
   # @return [Array]
   #
   def get_watch_list
-    get_cacher.get('urls') || []
+    cacher.get('urls') || []
   end
 
   ##
@@ -128,7 +128,7 @@ module Service::PutLocker::SeasonWatcher
   #
   def add_url(url)
     # [Array] list
-    list = get_cacher.get('urls') || []
+    list = cacher.get('urls') || []
     return self if list.include?(url)
 
     valid_url?(url)
@@ -136,7 +136,7 @@ module Service::PutLocker::SeasonWatcher
     list.push url
 
     timeout = 3600 * 24 * 365 * 5 # set long timeout
-    get_cacher.put 'urls', list, nil, timeout
+    cacher.put 'urls', list, nil, timeout
 
     self
   end
@@ -226,7 +226,7 @@ module Service::PutLocker::SeasonWatcher
   #
   def set_last_episode(url, last_episode)
     timeout = 3600 * 24 * 365 * 5 # set long timeout
-    get_cacher.put 'last-episode-' + url, last_episode, nil, timeout
+    cacher.put 'last-episode-' + url, last_episode, nil, timeout
 
     self
   end
@@ -250,5 +250,5 @@ module Service::PutLocker::SeasonWatcher
   end
 
   # Declare included module functions
-  module_function :get_cacher, :get_cache_basename
+  module_function :cacher, :get_cache_basename
 end

@@ -18,7 +18,7 @@ module Service
 
           def fetch(uri:, use_cache: @use_cache)
             if use_cache
-              items = get_cacher.get 'item', get_cache_default_namespace
+              items = cacher.get 'item', get_cache_default_namespace
               return items if nil != items
             end
 
@@ -32,7 +32,7 @@ module Service
             fetcher.instructions = self::menu_instructions
             items                = fetcher.fetch(html).first
 
-            get_cacher.put 'items', items, get_cache_default_namespace
+            cacher.put 'items', items, get_cache_default_namespace
 
             items
           end

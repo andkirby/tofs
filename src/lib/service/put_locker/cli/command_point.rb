@@ -20,7 +20,7 @@ module Service
         def run
           program :name, 'putlocker'
           program :version, '0.1.0'
-          program :description, 'Movie Watcher for putlocker.is service.'
+          program :description, 'Movie Watcher for Putlocker service.'
 
           # region Init commands
           command :urls do |c|

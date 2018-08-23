@@ -34,7 +34,7 @@ module Service
           #
           # @return [Service::PutLocker::Cli::CommandApi]
           #
-          def get_api
+          def api
             Service::PutLocker::Cli::CommandApi
           end
 

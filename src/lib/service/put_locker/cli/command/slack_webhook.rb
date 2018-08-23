@@ -11,10 +11,10 @@ module Service::PutLocker::Cli::Command
     def execute(args, options)
       if args.empty?
         # show current URL
-        url = get_api::get_slack_webhook_url
+        url = api::slack_webhook_url
         get_output.simple url.to_s if url
       else
-        get_api::set_slack_webhook_url args.first
+        api::slack_webhook_url = args.first
       end
     end
 

@@ -17,8 +17,8 @@ module Service
       #
       # @return [Cacher]
 
-      def get_cacher
-        return @cacher if nil != @cacher
+      def cacher
+        return @cacher unless nil == @cacher
         @cacher = Cacher.new(
           {
             :base_name         => get_cache_basename,

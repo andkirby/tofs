@@ -9,7 +9,7 @@ module Service::PutLocker::Cli::Command
     # Send updates to Slack
     #
     def execute(args, options)
-      message = get_api::send_news_message
+      message = api::send_update
 
       if message
         get_output.simple message.yellow

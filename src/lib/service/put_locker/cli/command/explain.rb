@@ -12,14 +12,14 @@ module Service::PutLocker::Cli::Command
     # If passed option --test it will request last episode from the online page
     #
     def execute(args, options)
-      urls = args.empty? ? get_api::get_urls : args
+      urls = args.empty? ? api::urls : args
 
       raise 'Empty URLs list.' if urls.count == 0
 
       urls.each do |url|
 
         # Serial info
-        serial = get_api::get_info url
+        serial = api::info url
 
         raise "Cannot fetch data by URL: #{url}." if serial.nil?
 
@@ -28,8 +28,8 @@ module Service::PutLocker::Cli::Command
 
         # Last episode info
         # fetch the latest online episode
-        the_latest_episode = options.online ? get_api::fetch_last_episode(url) : false
-        last_episode = the_latest_episode || get_api::get_last_episode(url)
+        the_latest_episode = options.online ? api::fetch_last_episode(url) : false
+        last_episode = the_latest_episode || api::last_episode(url)
         if last_episode
           serial['last episode'] = 'Season ' + last_episode[:season_index].to_s +
                               ' Episode ' + last_episode[:index].to_s

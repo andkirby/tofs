@@ -17,14 +17,14 @@ module Service::PutLocker::Api
       # @return [Array]
 
       def fetch(url)
-        list = get_cacher.get 'list-' + url
+        list = cacher.get 'list-' + url
         return list if nil != list
 
         fetcher = HtmlReader::PageFetcher.new
         fetcher.instructions get_instructions
         list = fetcher.fetch(get_document(url))
 
-        get_cacher.put 'list-' + url, list
+        cacher.put 'list-' + url, list
 
         list
       end
@@ -102,7 +102,7 @@ module Service::PutLocker::Api
       end
 
       # Declare included module functions
-      module_function :get_cacher, :get_cache_basename
+      module_function :cacher, :get_cache_basename
     end
   end
 end

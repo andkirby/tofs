@@ -20,7 +20,7 @@ module Service
         # @return [Hash]
 
         def fetch_info(url)
-          info = get_cacher.get 'info-' + url
+          info = cacher.get 'info-' + url
           return info if nil != info
 
           fetcher = HtmlReader::PageFetcher.new
@@ -58,7 +58,7 @@ module Service
           return nil unless info
 
           info = info.first
-          get_cacher.put 'info-' + url, info
+          cacher.put 'info-' + url, info
 
           info
         end
@@ -85,7 +85,7 @@ module Service
         end
 
         # Declare included module functions
-        module_function :get_cacher, :get_cache_basename
+        module_function :cacher, :get_cache_basename
       end
     end
   end

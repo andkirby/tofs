@@ -20,7 +20,7 @@ module Service
 
           def fetch(use_cache: @use_cache)
             if use_cache
-              menu = get_cacher.get 'menu', 'menu'
+              menu = cacher.get 'menu', 'menu'
               return menu if nil != menu
             end
 
@@ -31,7 +31,7 @@ module Service
             fetcher.instructions = self::menu_instructions
             menu = fetcher.fetch(html)
 
-            get_cacher.put 'menu', menu, 'menu'
+            cacher.put 'menu', menu, 'menu'
 
             menu
           end
