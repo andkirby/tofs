@@ -21,7 +21,7 @@ module Service::PutLocker::Api
         return list if nil != list
 
         fetcher = HtmlReader::PageFetcher.new
-        fetcher.instructions get_instructions
+        fetcher.instructions = get_instructions
         list = fetcher.fetch(get_document(url))
 
         cacher.put 'list-' + url, list
