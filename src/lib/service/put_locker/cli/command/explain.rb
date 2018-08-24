@@ -16,6 +16,8 @@ module Service::PutLocker::Cli::Command
 
       raise 'Empty URLs list.' if urls.count == 0
 
+      show_width = options.max_width ? nil : 100
+
       urls.each do |url|
 
         # Serial info
@@ -38,7 +40,7 @@ module Service::PutLocker::Cli::Command
           serial['last episode'] = 'No'.light_red
         end
 
-        show_entity serial
+        show_entity serial, max_width: show_width
       end
     end
 
@@ -59,6 +61,7 @@ module Service::PutLocker::Cli::Command
       command.description = 'Show serial information by URL. ' +
         'With omitted URL it will show information about all URLs from "watch list".'
       command.option '--online', 'Try to fetch new last episode.'
+      command.option '--max-width', 'Use max width in terminal tables.'
     end
   end
 end
