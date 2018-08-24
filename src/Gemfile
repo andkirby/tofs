@@ -30,9 +30,15 @@ gem 'sinatra'
 gem 'commander'
 
 # https://github.com/tj/terminal-table
+# Show data within a table in terminal
 gem 'terminal-table'
 
 # http://radek.io/2014/01/25/word-wrap-in-ruby/
+# Wrap words in terminal
 gem 'word_wrap'
+
+# https://github.com/genki/ruby-terminfo
+# Get terminal window size
+gem 'ruby-terminfo'
 
 # gem 'autoloader', '~> 0.0.2'

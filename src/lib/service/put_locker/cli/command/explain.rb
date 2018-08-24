@@ -30,6 +30,7 @@ module Service::PutLocker::Cli::Command
         # fetch the latest online episode
         the_latest_episode = options.online ? api::fetch_last_episode(url) : false
         last_episode = the_latest_episode || api::last_episode(url)
+        api::fetch_new_episodes
         if last_episode
           serial['last episode'] = 'Season ' + last_episode[:season_index].to_s +
                               ' Episode ' + last_episode[:index].to_s
