@@ -24,8 +24,29 @@ module Service
 
         rows = []
         entity.each do |key, value|
+          if [true, false].include? value
+            value = value.to_s
+          end
+
           if value.kind_of? Hash
             value = value[:label]
+          end
+
+          # gather names from array list
+          if key == :seasons
+            1.times do
+              formatted = ''
+              value.each do |season|
+                formatted += "\nS#{season[:label]}"
+                if season[:episodes]
+                  season[:episodes].each do |episode|
+                    formatted += "\n- E#{episode[:number]} / #{episode[:quality]} " +
+                        "/ #{episode[:label]}"
+                  end
+                end
+              end
+              value = formatted.strip
+            end
           end
 
           # gather names from array list

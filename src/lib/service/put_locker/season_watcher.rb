@@ -60,8 +60,8 @@ module Service::PutLocker::SeasonWatcher
   #
   # @return [Hash]
   #
-  def get_serial_info(url)
-    Service::PutLocker::Api::Movie::fetch_info url
+  def get_serial_info(url, episodes: true)
+    Service::PutLocker::Api::Movie::fetch_info url, episodes: episodes
   end
 
   ##

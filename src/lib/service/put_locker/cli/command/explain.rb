@@ -26,16 +26,16 @@ module Service::PutLocker::Cli::Command
         raise "Cannot fetch data by URL: #{url}." if serial.nil?
 
         serial[:label] = serial[:label].green
-        serial[:url] = url if serial[:url].nil?
+        serial[:url]   = url if serial[:url].nil?
 
         # Last episode info
         # fetch the latest online episode
         the_latest_episode = options.online ? api::fetch_last_episode(url) : false
-        last_episode = the_latest_episode || api::last_episode(url)
+        last_episode       = the_latest_episode || api::last_episode(url)
         api::fetch_new_episodes
         if last_episode
           serial['last episode'] = 'Season ' + last_episode[:season_index].to_s +
-                              ' Episode ' + last_episode[:index].to_s
+              ' Episode ' + last_episode[:index].to_s
         else
           serial['last episode'] = 'No'.light_red
         end
@@ -59,7 +59,7 @@ module Service::PutLocker::Cli::Command
       command.syntax      = 'putlocker explain [URL, URL2, URLn]'
       command.summary     = 'Show serial information.'
       command.description = 'Show serial information by URL. ' +
-        'With omitted URL it will show information about all URLs from "watch list".'
+          'It will show information about all URLs from "watch list".'
       command.option '--online', 'Try to fetch new last episode.'
       command.option '--max-width', 'Use max width in terminal tables.'
     end

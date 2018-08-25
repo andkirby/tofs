@@ -147,6 +147,8 @@ module HtmlReader
 
           nodes = Page::fetch_nodes(document, instruction)
 
+          nodes = [{}] if nodes.nil?
+
           nodes.each_with_index {|node, i|
             if instruction[:gather_data]
               # gather items under the same collector
