@@ -17,7 +17,7 @@ module HtmlReader
     #
     # @return [Hash]
 
-    def get_instructions
+    def instructions
       @instructions
     end
 
@@ -28,7 +28,7 @@ module HtmlReader
 
     def fetch(document)
       items = []
-      if get_instructions[:block].nil?
+      if instructions[:block].nil?
         # "block" instructions is not defined
         if document.instance_of?(Nokogiri::HTML::Document)
           block_document = fetch_block_document(document, {:type => :selector, :selector => 'body'}).first
@@ -36,13 +36,13 @@ module HtmlReader
           block_document = document
         end
 
-        fetch_data(block_document, get_instructions[:entity]).each do |element|
+        fetch_data(block_document, instructions[:entity]).each do |element|
           items.push element
         end
       else
         # fetch each "block" and process entities
-        fetch_block_document(document, get_instructions[:block]).each {|block_document|
-          fetch_data(block_document, get_instructions[:entity]).each {|element|
+        fetch_block_document(document, instructions[:block]).each {|block_document|
+          fetch_data(block_document, instructions[:entity]).each {|element|
             items.push element
           }
         }
@@ -57,10 +57,10 @@ module HtmlReader
     # @return [TrueClass, FalseClass]
 
     def last_page?(document)
-      if get_instructions[:last_page][:type] == :function
-        !!call_function(document, get_instructions[:last_page])
+      if instructions[:last_page][:type] == :function
+        !!call_function(document, instructions[:last_page])
       else
-        Page::fetch_nodes(document, get_instructions[:last_page]).count > 0
+        Page::fetch_nodes(document, instructions[:last_page]).count > 0
       end
     end
 
