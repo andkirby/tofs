@@ -19,7 +19,7 @@ module Service
         @base_name         = options[:base_name]
         @default_namespace = options[:default_namespace]
         @timeout           = options[:timeout] || 24 * 3600 * 365
-        @cache_dir         = options[:cache_dir] || __dir__ + '/../../../.cache'
+        @cache_dir         = options[:cache_dir] || '/tmp/cached-request-ruby'
         @use_base_name     = (options.key? :use_base_name) ? options[:use_base_name] : true
         @adapters          = {}
         @debug             = !!options[:debug]
