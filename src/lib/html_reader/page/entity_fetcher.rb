@@ -4,7 +4,7 @@ require_relative '../error'
 require_relative 'values_collector'
 require_relative '../page'
 
-module HtmlReader
+module HtmlEntry
   module Page
     ##
     # This entity-html_reader class designed for reading data from HTML/XML block according to instructions
@@ -134,7 +134,7 @@ module HtmlReader
       # @return [Hash]
 
       def fetch_plenty(document)
-        # @type [HtmlReader::Page::ValuesCollector[]] collectors
+        # @type [HtmlEntry::Page::ValuesCollector[]] collectors
         collectors = {}
         unless get_instructions.instance_of? Array
           raise 'Instructions must be an array.'
@@ -170,7 +170,7 @@ module HtmlReader
         data = []
 
         collectors.each do |i, collector|
-          # @type [HtmlReader::Page::ValuesCollector] collector
+          # @type [HtmlEntry::Page::ValuesCollector] collector
           data.push collector.data
         end
 

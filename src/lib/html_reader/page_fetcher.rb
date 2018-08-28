@@ -1,6 +1,6 @@
 require_relative 'page/entity_fetcher'
 
-module HtmlReader
+module HtmlEntry
   class PageFetcher
     ##
     # Set instructions

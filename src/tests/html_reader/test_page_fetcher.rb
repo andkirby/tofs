@@ -4,7 +4,7 @@ require 'nokogiri'
 require 'pp'
 require_relative '../../lib/html_reader/page_fetcher'
 
-module HtmlReader
+module HtmlEntry
   class TestPageFetcher < Test::Unit::TestCase
     # Test get/set instructions
     def test_set_instructions

@@ -1,4 +1,4 @@
-module HtmlReader
+module HtmlEntry
   module Page
     ##
     # Get node by XPath or CSS selector

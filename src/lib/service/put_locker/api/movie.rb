@@ -24,7 +24,7 @@ module Service
           info = cacher.get 'info-' + url + episodes.to_s
           return info if nil != info
 
-          fetcher = HtmlReader::PageFetcher.new
+          fetcher = HtmlEntry::PageFetcher.new
           # TODO add fetching genres
           fetcher.instructions = {
               :block  => {

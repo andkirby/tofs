@@ -6,13 +6,13 @@ require_relative '../../../lib/html_reader/page_fetcher'
 require_relative '../../content_fixture'
 
 
-module HtmlReader
+module HtmlEntry
   class TestPageFetcher_TestMultiData < Test::Unit::TestCase
 
     include ContentFixture
 
     def test_multi_nodes
-      obj  = HtmlReader::PageFetcher.new
+      obj  = HtmlEntry::PageFetcher.new
       html = Nokogiri::HTML(
           content(__method__.to_s, __FILE__)
       )

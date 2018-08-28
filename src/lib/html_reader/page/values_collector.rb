@@ -2,7 +2,7 @@ require 'pp'
 require 'nokogiri'
 require_relative '../error'
 
-module HtmlReader
+module HtmlEntry
   module Page
     ##
     # This class responsible for getting values according to an instruction
@@ -54,7 +54,7 @@ module HtmlReader
         elsif nil == node && instruction[:type]
           value = nil
         else
-          raise HtmlReader::Error.new 'Unknown instruction type or XML/HTML node not found.'
+          raise HtmlEntry::Error.new 'Unknown instruction type or XML/HTML node not found.'
         end
 
         value = filter_node(value, instruction)
@@ -152,7 +152,7 @@ module HtmlReader
         if instruction[:function].instance_of? Proc
           instruction[:function].call name, instruction, @data, @options
         else
-          HtmlReader::Error.new ':function is not instance of Proc'
+          HtmlEntry::Error.new ':function is not instance of Proc'
         end
       end
     end

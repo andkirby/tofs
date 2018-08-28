@@ -28,7 +28,7 @@ module Service
                     '/' + uri.delete_prefix('/'),
                 use_cache: use_cache)
 
-            fetcher              = HtmlReader::PageFetcher.new
+            fetcher              = HtmlEntry::PageFetcher.new
             fetcher.instructions = self::menu_instructions
             items                = fetcher.fetch(html).first
 

@@ -4,7 +4,7 @@ require 'nokogiri'
 require 'pp'
 require_relative '../../lib/html_reader/page_fetcher'
 
-module HtmlReader
+module HtmlEntry
   class TestPage < Test::Unit::TestCase
 
     # Test fetching nodes on a page

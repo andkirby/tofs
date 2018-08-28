@@ -3,7 +3,7 @@ require 'mocha/test_unit'
 require 'nokogiri'
 require_relative __dir__ + '/../../../lib/html_reader/page/entity_fetcher'
 
-module HtmlReader
+module HtmlEntry
   module Page
     class TestEntityFetcher < Test::Unit::TestCase
       # Test get/set instructions

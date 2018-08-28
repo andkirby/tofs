@@ -20,7 +20,7 @@ module Service::PutLocker::Api
         list = cacher.get 'list-' + url
         return list if nil != list
 
-        fetcher = HtmlReader::PageFetcher.new
+        fetcher = HtmlEntry::PageFetcher.new
         fetcher.instructions = get_instructions
         list = fetcher.fetch(get_document(url))
 
