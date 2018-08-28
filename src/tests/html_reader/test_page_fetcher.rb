@@ -11,7 +11,7 @@ module HtmlReader
       obj   = PageFetcher.new
       value = {:aa => 'aa'}
       obj.instructions = value
-      assert_equal(value, obj.get_instructions)
+      assert_equal(value, obj.instructions)
     end
 
     # Test fetching nodes on a page
