@@ -54,6 +54,7 @@ module Service
                               :instructions => {
                                   :selector => 'a',
                                   :data     => {
+                                      :number => {},
                                       :label => {},
                                       :url   => {
                                           :type      => :attribute,
@@ -171,7 +172,7 @@ module Service
 
           if episodes
             info.each do |el|
-              if !el[:seasons].empty?
+              unless el[:seasons].empty?
                 el[:seasons].each do |season|
                   season[:episodes] = Service::PutLocker::Api::Serial::Episodes::fetch(season[:url])
                 end

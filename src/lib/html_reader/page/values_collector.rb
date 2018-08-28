@@ -22,7 +22,7 @@ module HtmlReader
       #
       # @type [Hash]
 
-      @data    = {}
+      @data = {}
 
       def initialize(options = {})
         @options = options
@@ -38,15 +38,16 @@ module HtmlReader
       # @return [String, Nokogiri::XML::Element]
 
       def fetch(name, instruction, node)
-        if node && instruction[:type] == :attribute
+        if node and instruction[:type] == :attribute
           value = get_node_attribute(
-            node,
-            instruction
+              node,
+              instruction
           )
         elsif instruction[:type] == :function
           value = call_function(name, instruction)
         elsif instruction[:type] == :children
-          value = children(name, instruction, node)
+          value = children(name, instruction, node,
+                           plenty: (instruction[:children_plenty].nil? ? true : instruction[:children_plenty]))
         elsif node && (instruction[:type] == :value || nil == instruction[:type])
           # empty type should be determined as :value
           value = node
@@ -88,13 +89,13 @@ module HtmlReader
       # @param [Nokogiri::XML::Element] node
       # @return [Hash, Array]
 
-      def children(name, instruction, node)
+      def children(name, instruction, node, plenty: true)
         instruction = instruction[:instructions] == :the_same ?
-          @options[:instructions] : instruction[:instructions]
+                          @options[:instructions] : instruction[:instructions]
 
-        fetcher = Page::EntityFetcher.new
+        fetcher              = Page::EntityFetcher.new
         fetcher.instructions = instruction
-        fetcher.fetch(document: node, plenty: true)
+        fetcher.fetch(document: node, plenty: plenty)
       end
 
       ##

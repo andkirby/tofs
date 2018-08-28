@@ -34,13 +34,25 @@ module Service::PutLocker::Cli::Command
         last_episode       = the_latest_episode || api::last_episode(url)
         api::fetch_new_episodes
         if last_episode
-          serial['last episode'] = 'Season ' + last_episode[:season_index].to_s +
+          serial[:last_episode] = 'Season ' + last_episode[:season_index].to_s +
               ' Episode ' + last_episode[:index].to_s
         else
-          serial['last episode'] = 'No'.light_red
+          serial[:last_episode] = 'No'.light_red
         end
 
-        show_entity serial, max_width: show_width
+        show_entity serial, max_width: show_width, view: (view_type(options))
+      end
+    end
+
+    def view_type(options)
+      if options.normal
+        Service::Cli::ShowEntity::VIEW_NORMAL
+      elsif options.short
+        Service::Cli::ShowEntity::VIEW_SHORT
+      elsif options.detailed
+        Service::Cli::ShowEntity::VIEW_DETAILED
+      else
+        Service::Cli::ShowEntity::VIEW_NORMAL
       end
     end
 
@@ -62,6 +74,9 @@ module Service::PutLocker::Cli::Command
           'It will show information about all URLs from "watch list".'
       command.option '--online', 'Try to fetch new last episode.'
       command.option '--max-width', 'Use max width in terminal tables.'
+      command.option '--detailed', 'Use "detailed" view.'
+      command.option '--short', 'Use "short" view.'
+      command.option '--normal', 'Use "normal" view.'
     end
   end
 end
