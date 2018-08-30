@@ -13,10 +13,10 @@ module Service
       def request(url, use_cache: true, namespace: nil, timeout: 3600)
         cached_execute namespace: namespace,
                        url: url,
-                       timeout: use_cache ? timeout : 0
+                       timeout: use_cache ? timeout : nil
       end
 
-      #protected
+      # protected
 
       def execute(url)
         String.new(query(url))
@@ -28,7 +28,8 @@ module Service
 
       def cached_execute(namespace:, url:, timeout: 3600)
         cacher = cacher timeout, url
-        body   = cacher.get url, namespace
+        body   = nil
+        body   = cacher.get url, namespace unless timeout.nil?
         return body unless body.nil?
 
         body = execute(url)

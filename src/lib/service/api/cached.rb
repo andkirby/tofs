@@ -32,7 +32,7 @@ module Service
         )
       end
 
-      protected
+      # protected
 
       ##
       # Get custom cache adapter options
