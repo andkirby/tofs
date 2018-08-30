@@ -8,24 +8,25 @@ module Service
   module PutLocker
     module Cli
       module Command
+        ##
+        # Abstract class for a command
+        #
         class CommandAbstract
           ##
           # Execute command
           #
-          def execute(args, options)
+          def execute #(args, options)
             raise 'The method "' + __method__.to_s + '" is implemented.'
           end
 
           ##
           # Initialize command
           #
-          # @param [Commander::Command] command
-          #
-          def init_command(command)
+          def init_command #(Commander::Command command)
             # Example of code
-            # command.syntax      = 'putlocker urls'
-            # command.summary     = ''
-            # command.description = 'Show URLs watch list.'
+            # command.syntax      = 'command arg_1'
+            # command.summary     = 'short summary of the command'
+            # command.description = 'to-do some extra information here.'
             raise 'The method "' + __method__.to_s + '" is implemented.'
           end
 
@@ -35,18 +36,16 @@ module Service
           # @return [Service::PutLocker::Cli::CommandApi]
           #
           def api
-            Service::PutLocker::Cli::CommandApi
+            @api ||= Service::PutLocker::Cli::CommandApi.new
           end
 
           ##
           # Get CLI API module
           #
-          # @return [Service::PutLocker::Cli::CommandApi]
+          # @return [Shell::Output]
           #
-          def get_output
-            @output = Shell::Output unless @output
-
-            @output
+          def output
+            @output ||= Shell::Output
           end
         end
       end

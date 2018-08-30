@@ -12,7 +12,7 @@ module Service::PutLocker::Cli::Command
       if args.empty?
         # show current URL
         url = api::slack_webhook_url
-        get_output.simple url.to_s if url
+        output.simple url.to_s if url
       else
         api::slack_webhook_url = args.first
       end

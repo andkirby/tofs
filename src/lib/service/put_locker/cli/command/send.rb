@@ -12,9 +12,9 @@ module Service::PutLocker::Cli::Command
       message = api::send_update
 
       if message
-        get_output.simple message.yellow
+        output.simple message.yellow
       else
-        get_output.simple 'No updates yet.'.red
+        output.simple 'No updates yet.'.red
       end
     end
 

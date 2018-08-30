@@ -10,7 +10,7 @@ module Service::PutLocker::Cli::Command
       if args.count > 0
         api::add_urls args
       else
-        api::urls.each { |url| get_output.simple url }
+        api::urls.each { |url| output.simple url }
       end
     end
 

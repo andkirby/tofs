@@ -1,4 +1,4 @@
-require 'html_entry'
+require 'html_entry/page_fetcher'
 require_relative '../../../service/document'
 require_relative '../../../service/put_locker'
 require_relative '../../../service/put_locker/api/cached'
@@ -7,10 +7,12 @@ require_relative 'serial/episodes'
 module Service
   module PutLocker
     module Api
-      module Movie
-        module_function
-
+      ##
+      # Movie data model
+      #
+      class Movie
         # Include caching methods
+        include Service::Api::Cached
         include Service::PutLocker::Api::Cached
 
         ##
@@ -18,8 +20,8 @@ module Service
         #
         # @param [String] url   Base season page URL
         # @return [Hash]
-
-        def fetch_info(url, episodes: false)
+        #
+        def fetch(url, episodes: false)
           info = cacher.get 'info-' + url + episodes.to_s
           return info unless info.nil?
 
@@ -68,9 +70,9 @@ module Service
                 data: {
                   serial: {
                     type: :function,
-                    function: proc { |_name, _instruction, data, _options|
-                                !data[:seasons].empty?
-                              }
+                    function: proc do |_name, _instruction, data, _options|
+                      !data[:seasons].nil? && !data[:seasons].empty?
+                    end
                   }
                 }
               },
@@ -171,7 +173,7 @@ module Service
 
           if episodes
             info.each do |el|
-              next if el[:seasons].empty?
+              next if el[:seasons].nil? || el[:seasons].empty?
               el[:seasons].each do |season|
                 season[:episodes] = episodes_fetcher.fetch(season[:url])
               end

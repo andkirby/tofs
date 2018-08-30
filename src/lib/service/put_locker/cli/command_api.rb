@@ -11,20 +11,29 @@ require_relative '../api/serial/seasons'
 module Service
   module PutLocker
     module Cli
-      module CommandApi
+      ##
+      # Base CLI API module
+      #
+      class CommandApi
+        include Service::Api::Cached
         include Service::PutLocker::Api::Cached
-        module_function
+
+        attr_reader :watcher
+
+        def initialize(watcher: nil, movie: nil)
+          @watcher = watcher || Service::PutLocker::SeasonWatcher.new(movie: movie)
+        end
 
         def add_urls(urls)
           raise ArgumentError, 'Non-Array argument.' unless urls.instance_of? Array
           raise CommandError, 'Nothing to add. URLs list is empty.' if urls.empty?
 
-          urls.each { |url| watcher::add_to_watch url }
+          urls.each { |url| watcher.add_to_watch url }
           self
         end
 
         def urls
-          watcher::get_watch_list
+          watcher.watch_list
         end
 
         ##
@@ -34,7 +43,7 @@ module Service
         # @return [Hash]
         #
         def info(url)
-          watcher::get_serial_info url
+          watcher.serial_info url
         end
 
         ##
@@ -44,7 +53,7 @@ module Service
         # @return [Hash]
         #
         def last_episode(url)
-          watcher::get_last_episode url
+          watcher.last_episode url
         end
 
         ##
@@ -54,7 +63,7 @@ module Service
         # @return [Hash]
         #
         def fetch_last_episode(url)
-          watcher::get_serial_new_episodes(url).last
+          watcher.episodes_diff(url).last
         end
 
         ##
@@ -64,7 +73,7 @@ module Service
         # @return [String] Output message
         #
         def fetch_new_episodes(remember_last = false)
-          watcher::get_all_new_episodes remember_last
+          watcher.all_new_episodes remember_last
         end
 
         ##
@@ -74,8 +83,8 @@ module Service
         # @return [String] Output message
         #
         def fetch_news_message(remember_last = false)
-          watcher::make_send_message(
-            fetch_new_episodes remember_last
+          watcher.create_message(
+            fetch_new_episodes(remember_last)
           )
         end
 
@@ -90,7 +99,7 @@ module Service
           # cache last episodes after sent request
           fetch_new_episodes true
 
-          # TODO Return cli-human readable message
+          # TODO: Return cli-human readable message
           message
         end
 
@@ -100,8 +109,8 @@ module Service
         def sender
           raise CommandError, 'Slack webhook URL is not defined.' unless slack_webhook_url
 
-          Service::Sender::get(:slack_simple).new(
-            {:webhook_url => slack_webhook_url}
+          Service::Sender.get(:slack_simple).new(
+            webhook_url: slack_webhook_url
           )
         end
 
@@ -123,18 +132,9 @@ module Service
         def slack_webhook_url=(url)
           raise CommandError, 'Slack webhook URL is empty.' unless url
           cacher.put 'slack-webhook-url', url, nil, 24 * 3600 * 365 * 5
-          self
         end
 
         # endregion
-
-        protected
-        module_function
-
-        # @return [Service::PutLocker::SeasonWatcher]
-        def watcher
-          Service::PutLocker::SeasonWatcher
-        end
 
         ##
         # Get default namespace
@@ -143,12 +143,9 @@ module Service
         #
         # @return [String]
         #
-        def self.cache_default_namespace
+        def cache_default_namespace
           'cli'
         end
-
-        # Declare included module functions
-        module_function :cacher, :cache_basename, :cache_options
       end
     end
   end

@@ -5,11 +5,16 @@ require_relative '../../../../service/put_locker/api/cached'
 
 module Service::PutLocker::Api
   module Serial
+    ##
+    # Episodes data model
+    #
     module Episodes
-      # Include caching methods
-      include Service::PutLocker::Api::Cached
 
       module_function
+
+      # Include caching methods
+      include Service::Api::Cached
+      include Service::PutLocker::Api::Cached
 
       ##
       # Fetch seasons and serials presented on the page
