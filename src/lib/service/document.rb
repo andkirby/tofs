@@ -20,7 +20,7 @@ module Service
           Shell::Output.inline url
           Shell::Output.temp '...FETCHING'.yellow
         end
-        result = Service::Api::Request::request url, use_cache: use_cache
+        result = Service::Api::Request.request url, use_cache: use_cache
         if verbose
           Shell::Output.temp '...OK'.green
           Shell::Output.inline url

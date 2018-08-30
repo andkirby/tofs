@@ -4,10 +4,6 @@ source 'https://rubygems.org'
 # Work with dom document
 gem 'nokogiri'
 
-# Unit testing
-gem 'test-unit', '~> 3.1'
-gem 'mocha'
-
 # Request external pages
 gem 'rest-client'
 
@@ -40,5 +36,9 @@ gem 'word_wrap'
 # https://github.com/genki/ruby-terminfo
 # Get terminal window size
 gem 'ruby-terminfo'
+
+# https://github.com/rikby/html-entries
+# Get simple interface for fetching whole entries from HTML
+gem 'html_entry', path: './../../html-entry'
 
 # gem 'autoloader', '~> 0.0.2'

@@ -1,4 +1,4 @@
-require_relative '../../../../html_reader/page_fetcher'
+require 'html_entry'
 require_relative '../../../../service/document'
 require_relative '../../../../service/put_locker'
 require_relative '../../../../service/put_locker/api/cached'
@@ -15,13 +15,13 @@ module Service::PutLocker::Api
       #
       # @param [String] url   Base season page URL
       # @return [Array]
-
+      #
       def fetch(url)
         list = cacher.get 'list-' + url
         return list if nil != list
 
         fetcher = HtmlEntry::PageFetcher.new
-        fetcher.instructions = get_instructions
+        fetcher.instructions = instructions
         list = fetcher.fetch(get_document(url))
 
         cacher.put 'list-' + url, list
@@ -41,7 +41,7 @@ module Service::PutLocker::Api
       #
       # @return [Hash]
       #
-      def get_instructions
+      def instructions
         {
           :block  => {
             :selector => 'div.content-box'
@@ -88,7 +88,7 @@ module Service::PutLocker::Api
         }
       end
 
-      def get_cache_options
+      def cache_options
         {:timeout => 3600}
       end
 
@@ -96,13 +96,13 @@ module Service::PutLocker::Api
       # Get default namespace
       #
       # @return [String]
-
-      def get_cache_default_namespace
+      #
+      def cache_default_namespace
         'seasons'
       end
 
       # Declare included module functions
-      module_function :cacher, :get_cache_basename
+      module_function :cacher, :cache_basename
     end
   end
 end

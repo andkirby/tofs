@@ -236,7 +236,7 @@ module Service::PutLocker::SeasonWatcher
   #
   # @return [String]
   #
-  def get_cache_default_namespace
+  def cache_default_namespace
     'season_watcher'
   end
 
@@ -245,10 +245,10 @@ module Service::PutLocker::SeasonWatcher
   #
   # @return [String]
 
-  def get_cache_options
+  def cache_options
     {:timeout => 3600}
   end
 
   # Declare included module functions
-  module_function :cacher, :get_cache_basename
+  module_function :cacher, :cache_basename
 end

@@ -4,7 +4,6 @@ require 'uri'
 require 'rubygems'
 require 'openssl'
 
-
 module Service
   module Sender
     class SlackSimpleSender < SenderAbstract
@@ -12,21 +11,21 @@ module Service
       # Send message to slack webhook
       #
       # @param [String] message
-      # @param [Hash] options
-      # @return [Net::HTTPResponse]
       #
-      def send(message, options = {})
+      def send(message)
         return unless message
 
         uri = URI.parse(@options[:webhook_url])
 
-        http             = Net::HTTP.new(uri.host, uri.port)
+        http             = Net::HTTP.new uri.host, uri.port
         http.use_ssl     = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
         request = Net::HTTP::Post.new(uri.request_uri)
-        request.set_form_data(:payload => '{"text":"' + message + '"}')
+        # noinspection RubyResolve
         request.add_field('Accept', 'application/json')
+        # noinspection RubyResolve
+        request.set_form_data(payload: '{"text":"' + message + '"}')
 
         http.request(request)
       end
@@ -38,12 +37,8 @@ module Service
       #
       def init_client
         notifier = Slack::Notifier.new @options[:webhook_url]
-        if @options[:channel]
-          notifier.channel = @options[:channel]
-        end
-        if @options[:username]
-          notifier.username = @options[:username]
-        end
+        notifier.channel = @options[:channel] if @options[:channel]
+        notifier.username = @options[:username] if @options[:username]
         notifier
       end
     end

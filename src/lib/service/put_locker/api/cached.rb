@@ -15,7 +15,7 @@ module Service::PutLocker::Api
     #
     # @return [String]
     #
-    def get_cache_basename
+    def cache_basename
       Service::PutLocker::HOSTNAME
     end
   end

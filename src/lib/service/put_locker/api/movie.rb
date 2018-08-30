@@ -1,5 +1,4 @@
-require_relative '../../../html_reader/page_fetcher'
-require_relative '../../../html_reader/page/entity_fetcher'
+require 'html_entry'
 require_relative '../../../service/document'
 require_relative '../../../service/put_locker'
 require_relative '../../../service/put_locker/api/cached'
@@ -22,164 +21,162 @@ module Service
 
         def fetch_info(url, episodes: false)
           info = cacher.get 'info-' + url + episodes.to_s
-          return info if nil != info
+          return info unless info.nil?
 
           fetcher = HtmlEntry::PageFetcher.new
-          # TODO add fetching genres
+          # TODO: add fetching genres
           fetcher.instructions = {
-              :block  => {
-                  :selector => 'body'
+            block: {
+              selector: 'body'
+            },
+            entity: [
+              {
+                selector: '.topdescriptiondesc h2',
+                data: {
+                  label: {}
+                }
               },
-              :entity => [
-                  {
-                      :selector => '.topdescriptiondesc h2',
-                      :data     => {
-                          :label => {},
+              {
+                selector: '.topdescriptionthumb img',
+                data: {
+                  thumbnail: {
+                    type:      :attribute,
+                    attribute: 'src'
+                  }
+                }
+              },
+              {
+                selector: '.episodelistss .movies-letter',
+                data: {
+                  seasons: {
+                    type: :children,
+                    instructions: {
+                      selector: 'a',
+                      data: {
+                        number: {},
+                        label: {},
+                        url: {
+                          type: :attribute,
+                          attribute: 'href'
+                        }
                       }
-                  },
-                  {
-                      :selector => '.topdescriptionthumb img',
-                      :data     => {
-                          :thumbnail => {
-                              type:      :attribute,
-                              attribute: 'src',
-                          },
-                      }
-                  },
-                  {
-                      :selector => '.episodelistss .movies-letter',
-                      :data     => {
-                          :seasons => {
-                              :type         => :children,
-                              :instructions => {
-                                  :selector => 'a',
-                                  :data     => {
-                                      :number => {},
-                                      :label => {},
-                                      :url   => {
-                                          :type      => :attribute,
-                                          :attribute => 'href',
-                                      },
-                                  }
-                              }
-                          },
-                      }
-                  },
-                  {
-                      :data => {
-                          :serial => {
-                              :type     => :function,
-                              :function => Proc.new {|name, instruction, data, options|
+                    }
+                  }
+                }
+              },
+              {
+                data: {
+                  serial: {
+                    type: :function,
+                    function: proc { |_name, _instruction, data, _options|
                                 !data[:seasons].empty?
-                              },
-                          },
-                      }
-                  },
-                  {
-                      :selector => ".topdescriptiondesc li:has(strong:contains('Genre'))",
-                      :data     => {
-                          :genre => {
-                              :type         => :children,
-                              :instructions => {
-                                  :selector => 'a',
-                                  :data     => {
-                                      :label => {},
-                                      :url   => {
-                                          :type      => :attribute,
-                                          :attribute => 'href',
-                                      },
-                                  }
                               }
-                          },
+                  }
+                }
+              },
+              {
+                selector: ".topdescriptiondesc li:has(strong:contains('Genre'))",
+                data: {
+                  genre: {
+                    type: :children,
+                    instructions: {
+                      selector: 'a',
+                      data: {
+                        label: {},
+                        url: {
+                          type: :attribute,
+                          attribute: 'href'
+                        }
                       }
-                  },
-                  {
-                      :selector => ".topdescriptiondesc li:has(strong:contains('Actor'))",
-                      :data     => {
-                          :actor => {
-                              :type         => :children,
-                              :instructions => {
-                                  :selector => 'a',
-                                  :data     => {
-                                      :label => {},
-                                      :url   => {
-                                          :type      => :attribute,
-                                          :attribute => 'href',
-                                      },
-                                  }
-                              }
-                          },
+                    }
+                  }
+                }
+              },
+              {
+                selector: ".topdescriptiondesc li:has(strong:contains('Actor'))",
+                data: {
+                  actor: {
+                    type: :children,
+                    instructions: {
+                      selector: 'a',
+                      data: {
+                        label: {},
+                        url: {
+                          type: :attribute,
+                          attribute: 'href'
+                        }
                       }
-                  },
-                  {
-                      :selector => ".topdescriptiondesc li:has(strong:contains('Director'))",
-                      :data     => {
-                          :director => {
-                              :type         => :children,
-                              :instructions => {
-                                  :selector => 'a',
-                                  :data     => {
-                                      :label => {},
-                                      :url   => {
-                                          :type      => :attribute,
-                                          :attribute => 'href',
-                                      },
-                                  }
-                              }
-                          },
+                    }
+                  }
+                }
+              },
+              {
+                selector: ".topdescriptiondesc li:has(strong:contains('Director'))",
+                data: {
+                  director: {
+                    type: :children,
+                    instructions: {
+                      selector: 'a',
+                      data: {
+                        label: {},
+                        url: {
+                          type: :attribute,
+                          attribute: 'href'
+                        }
                       }
-                  },
-                  {
-                      :selector => ".topdescriptiondesc li:has(strong:contains('Country'))",
-                      :data     => {
-                          :country => {
-                              :type         => :children,
-                              :instructions => {
-                                  :selector => 'a',
-                                  :data     => {
-                                      :label => {},
-                                      :url   => {
-                                          :type      => :attribute,
-                                          :attribute => 'href',
-                                      },
-                                  }
-                              }
-                          },
+                    }
+                  }
+                }
+              },
+              {
+                selector: ".topdescriptiondesc li:has(strong:contains('Country'))",
+                data: {
+                  country: {
+                    type: :children,
+                    instructions: {
+                      selector: 'a',
+                      data: {
+                        label: {},
+                        url: {
+                          type: :attribute,
+                          attribute: 'href'
+                        }
                       }
-                  },
-                  {
-                      :selector => ".topdescriptiondesc li:has(strong:contains('Duration')) span",
-                      :data     => {
-                          :duration => {},
-                      }
-                  },
-                  {
-                      :selector => ".topdescriptiondesc li:has(strong:contains('IMDb')) span",
-                      :data     => {
-                          :imdb => {},
-                      }
-                  },
-                  {
-                      :selector => '.topdescriptiondesc p',
-                      :data     => {
-                          :description => {},
-                      }
-                  },
-              ]
+                    }
+                  }
+                }
+              },
+              {
+                selector: ".topdescriptiondesc li:has(strong:contains('Duration')) span",
+                data: {
+                  duration: {}
+                }
+              },
+              {
+                selector: ".topdescriptiondesc li:has(strong:contains('IMDb')) span",
+                data: {
+                  imdb: {}
+                }
+              },
+              {
+                selector: '.topdescriptiondesc p',
+                data: {
+                  description: {}
+                }
+              }
+            ]
           }
 
           info = fetcher.fetch(get_document(url))
 
           if episodes
             info.each do |el|
-              unless el[:seasons].empty?
-                el[:seasons].each do |season|
-                  season[:episodes] = Service::PutLocker::Api::Serial::Episodes::fetch(season[:url])
-                end
+              next if el[:seasons].empty?
+              el[:seasons].each do |season|
+                season[:episodes] = episodes_fetcher.fetch(season[:url])
               end
             end
           end
-
 
           return nil unless info
 
@@ -191,14 +188,12 @@ module Service
 
         protected
 
-        module_function
-
         def get_document(url)
-          Service::Document::fetch(url)
+          Service::Document.fetch(url)
         end
 
-        def get_cache_options
-          {:timeout => 3600 * 24 * 365}
+        def cache_options
+          { timeout: 3600 * 24 * 365 }
         end
 
         ##
@@ -206,12 +201,13 @@ module Service
         #
         # @return [String]
 
-        def get_cache_default_namespace
+        def cache_default_namespace
           'movie'
         end
 
-        # Declare included module functions
-        module_function :cacher, :get_cache_basename
+        def episodes_fetcher
+          Service::PutLocker::Api::Serial::Episodes
+        end
       end
     end
   end

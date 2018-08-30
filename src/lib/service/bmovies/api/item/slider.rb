@@ -1,4 +1,4 @@
-require_relative '../../../../html_reader/page_fetcher'
+require 'html_entry'
 require_relative '../../../../shell/output'
 require_relative '../../../api/request'
 require_relative '../../../document'
@@ -18,83 +18,91 @@ module Service
 
           def fetch(use_cache: @use_cache)
             if use_cache
-              items = cacher.get 'item', get_cache_default_namespace
-              return items if nil != items
+              items = cacher.get 'item', cache_default_namespace
+              return items unless items.nil?
             end
 
             # fetch
-            html = Service::Document::fetch Service::Bmovies::get_base_url, use_cache: use_cache
+            html = document(use_cache)
 
             fetcher              = HtmlEntry::PageFetcher.new
-            fetcher.instructions = self::menu_instructions
-            items                 = fetcher.fetch(html)
+            fetcher.instructions = instructions
 
-            cacher.put 'items', items, get_cache_default_namespace
+            items = fetcher.fetch(html)
+
+            cacher.put 'items', items, cache_default_namespace
 
             items
           end
 
-          def menu_instructions
+          def instructions
             {
-                # block where entities can be found
-                :block  => {
-                    :type     => :selector,
-                    :selector => '.slider.swiper-container div.container > div.inner',
+              # block where entities can be found
+              block:  {
+                type:     :selector,
+                selector: '.slider.swiper-container div.container > div.inner'
+              },
+              entity: [
+                {
+                  selector: 'a.name',
+                  data:     {
+                    label: {},
+                    url:   {
+                      type:      :attribute,
+                      attribute: 'href'
+                    }
+                  }
                 },
-                :entity => [
-                    {
-                        :selector => 'a.name',
-                        :data => {
-                            :label => {},
-                            :url   => {
-                                :type      => :attribute,
-                                :attribute => 'href',
-                            },
+                {
+                  selector: '.meta .imdb > b',
+                  data:     {
+                    imdb: {}
+                  }
+                },
+                {
+                  selector: '.meta .quality',
+                  data:     {
+                    quality: {}
+                  }
+                },
+                {
+                  selector:    '.meta .category',
+                  merge: true,
+                  data:        {
+                    genre: {
+                      type:         :children,
+                      instructions: {
+                        selector: 'a',
+                        data:     {
+                          label: {},
+                          url:   {
+                            type:      :attribute,
+                            attribute: 'href'
+                          }
                         }
-                    },
-                    {
-                        :selector => '.meta .imdb > b',
-                        :data => {
-                            :imdb => {},
-                        }
-                    },
-                    {
-                        :selector => '.meta .quality',
-                        :data => {
-                            :quality => {},
-                        }
-                    },
-                    {
-                        :selector => '.meta .category',
-                        :gather_data => true,
-                        :data => {
-                            :genre => {
-                                :type      => :children,
-                                :instructions => {
-                                    :selector => 'a',
-                                    :data => {
-                                        :label   => {},
-                                        :url   => {
-                                            :type      => :attribute,
-                                            :attribute => 'href',
-                                        },
-                                    }
-                                }
-                            },
-                        }
-                    },
-                    {
-                        :selector => '.desc',
-                        :data => {
-                            :description => {},
-                        }
-                    },
-                ],
+                      }
+                    }
+                  }
+                },
+                {
+                  selector: '.desc',
+                  data:     {
+                    description: {}
+                  }
+                }
+              ]
             }
           end
 
-          def get_cache_default_namespace
+          def cache_default_namespace
             'slider'
+          end
+
+          protected
+
+          def document(use_cache)
+            Service::Document.fetch Service::Bmovies.base_url,
+                                    use_cache: use_cache
           end
         end
       end

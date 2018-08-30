@@ -4,7 +4,12 @@ require_relative 'error'
 # Module with methods for using cache adapter
 module Service
   module Api
+    ##
+    # Module/Trait for data models
+    #
     module Cached
+      module_function
+
       ##
       # Cache adapter
       #
@@ -16,14 +21,14 @@ module Service
       # Get cache adapter
       #
       # @return [Cacher]
-
+      #
       def cacher
-        return @cacher unless nil == @cacher
+        return @cacher unless @cacher.nil?
         @cacher = Cacher.new(
           {
-            :base_name         => get_cache_basename,
-            :default_namespace => get_cache_default_namespace,
-          }.merge get_cache_options
+            base_name: cache_basename,
+            default_namespace: cache_default_namespace
+          }.merge(cache_options)
         )
       end
 
@@ -33,8 +38,8 @@ module Service
       # Get custom cache adapter options
       #
       # @return [Hash]
-
-      def get_cache_options
+      #
+      def cache_options
         {}
       end
 
@@ -46,9 +51,9 @@ module Service
       # (for default cache adapter).
       #
       # @return [String]
-
-      def get_cache_basename
-        raise Error, 'Method "get_cache_basename" is not implemented.'
+      #
+      def cache_basename
+        raise Error, 'Method "cache_basename" is not implemented.'
       end
 
       ##
@@ -57,8 +62,8 @@ module Service
       # It's recommended to overwrite this method with entity namespace
       #
       # @return [String]
-
-      def self.get_cache_default_namespace
+      #
+      def cache_default_namespace
         '_default'
       end
     end

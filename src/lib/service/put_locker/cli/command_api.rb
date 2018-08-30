@@ -143,12 +143,12 @@ module Service
         #
         # @return [String]
         #
-        def self.get_cache_default_namespace
+        def self.cache_default_namespace
           'cli'
         end
 
         # Declare included module functions
-        module_function :cacher, :get_cache_basename, :get_cache_options
+        module_function :cacher, :cache_basename, :cache_options
       end
     end
   end
